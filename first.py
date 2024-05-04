@@ -1,3 +1,5 @@
+import streamlit as st
+
 # Title and Text Display
 st.title("Streamlit App Test")
 st.write("This is a simple Streamlit app to test functionalities.")
