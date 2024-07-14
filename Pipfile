@@ -4,12 +4,13 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-streamlit = "*"
-numpy = "*"
-matplotlib = "*"
-pandas = "*"
+openai = "*"
+langchain = "*"
+flask = "*"
+pydub = "*"
+soundfile = "*"
 
 [dev-packages]
 
 [requires]
-python_version = "3.11"
+python_version = "3.12"
