@@ -4,11 +4,8 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-openai = "*"
-langchain = "*"
 flask = "*"
-pydub = "*"
-soundfile = "*"
+streamlit = "*"
 
 [dev-packages]
 
