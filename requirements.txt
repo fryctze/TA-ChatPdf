@@ -1,0 +1,8 @@
+-i https://pypi.org/simple
+faiss-cpu==1.8.0.post1; python_version >= '3.8'
+flask==3.0.3; python_version >= '3.8'
+langchain==0.2.7; python_version < '4.0' and python_full_version >= '3.8.1'
+langchain-community==0.2.7; python_version < '4.0' and python_full_version >= '3.8.1'
+langchain-openai==0.1.16; python_version < '4.0' and python_full_version >= '3.8.1'
+pypdf==4.3.0; python_version >= '3.6'
+streamlit==1.36.0; python_version >= '3.8' and python_full_version != '3.9.7'

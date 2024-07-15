@@ -6,6 +6,11 @@ name = "pypi"
 [packages]
 flask = "*"
 streamlit = "*"
+langchain = "*"
+langchain-community = "*"
+langchain-openai = "*"
+pypdf = "*"
+faiss-cpu = "*"
 
 [dev-packages]
 

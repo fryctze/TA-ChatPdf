@@ -1,28 +1,31 @@
 import streamlit as st
 
-# Title and Text Display
-st.title("Streamlit App Test")
-st.write("This is a simple Streamlit app to test functionalities.")
+if not hasattr(st, 'already_started_server'):
+    # Hack the fact that Python modules (like st) only load once to
+    # keep track of whether this file already ran.
+    st.already_started_server = True
 
-# User Input with Checkbox
-name = st.text_input("Enter your name:")
+    st.write('''
+        The first time this script executes it will run forever because it's
+        running a Flask server.
 
-if st.checkbox("Show Greeting"):
-  if name:
-    st.write(f"Hello, {name}!")
-  else:
-    st.warning("Please enter your name first!")
+        Just close this browser tab and open a new one to see your Streamlit
+        app.
+    ''')
 
-# Selectbox for choosing a fruit
-fruits = ["Apple", "Banana", "Orange"]
-selected_fruit = st.selectbox("Select your favorite fruit:", fruits)
+    from flask import Flask
 
-st.write(f"You selected: {selected_fruit}")
+    app = Flask(__name__)
 
-# Button Click Event
-if st.button("Click me!"):
-  st.balloons()  # Fun element to show a success message
+    @app.route('/foo')
+    def serve_foo():
+        return 'This page is served via Flask!'
 
-# Display Code (Optional)
-if st.checkbox("Show App Code"):
-  st.code(open(__file__, 'r').read())
+    app.run(port=8888)
+
+
+# We'll never reach this part of the code the first time this file executes!
+
+# Your normal Streamlit app goes here:
+x = st.slider('Pick a number')
+st.write('You picked:', x)
