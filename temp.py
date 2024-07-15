@@ -21,6 +21,7 @@ if not hasattr(st, 'already_started_server'):
     def serve_foo():
         return 'This page is served via Flask!'
 
+    # default port is 5000
     app.run(port=8888)
 
 

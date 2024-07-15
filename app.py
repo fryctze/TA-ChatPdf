@@ -1,39 +1,37 @@
 import streamlit as st
-from flask import Flask
+import multiprocessing
 
-app = Flask(__name__)
+must_reload_page = False
 
 
-if not hasattr(st, 'already_started_server'):
-  # Hack the fact that Python modules (like st) only load once to
-  # keep track of whether this file already ran.
-  st.already_started_server = True
+def start_flask():
+  if not hasattr(st, 'already_started_server'):
+    st.already_started_server = True
+    must_reload_page = True
 
-  st.write('''
-        The first time this script executes it will run forever because it's
-        running a Flask server.
+    from flask import Flask
 
-        Just close this browser tab and open a new one to see your Streamlit
-        app.
-    ''')
+    app = Flask(__name__)
 
-  # from flask import Flask
-  #
-  # app = Flask(__name__)
+    @app.route('/foo')
+    def serve_foo():
+      return 'This page is served via Flask!'
 
-  app.run()
+    app.run(port=8888)
 
-  @app.route('/foo')
-  def serve_foo():
-    return 'This page is served via Flask! FIRST'
 
-# We'll never reach this part of the code the first time this file executes!
+def reload_page():
+  if must_reload_page:
+    must_reload_page = False
+    st.experimental_rerun()
+
+
+if __name__ == '__main__':
+  flask_process = multiprocessing.Process(target=start_flask)
+  reload_process = multiprocessing.Process(target=reload_page)
+  flask_process.start()
+  reload_process.start()
 
 # Your normal Streamlit app goes here:
 x = st.slider('Pick a number')
 st.write('You picked:', x)
-
-
-@app.route('/foo')
-def serve_foo():
-  return 'This page is served via Flask! Second'
