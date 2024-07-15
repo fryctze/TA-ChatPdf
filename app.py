@@ -1,4 +1,8 @@
 import streamlit as st
+from flask import Flask
+
+app = Flask(__name__)
+
 
 if not hasattr(st, 'already_started_server'):
   # Hack the fact that Python modules (like st) only load once to
@@ -13,9 +17,9 @@ if not hasattr(st, 'already_started_server'):
         app.
     ''')
 
-  from flask import Flask
-
-  app = Flask(__name__)
+  # from flask import Flask
+  #
+  # app = Flask(__name__)
 
   # @app.route('/foo')
   # def serve_foo():
