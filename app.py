@@ -21,7 +21,7 @@ if not hasattr(st, 'already_started_server'):
     def serve_foo():
         return 'This page is served via Flask!'
 
-    app.run(debug=True, use_reloader=True)
+    app.run(port=8888)
 
 
 # We'll never reach this part of the code the first time this file executes!
