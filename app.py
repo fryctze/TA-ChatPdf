@@ -7,6 +7,7 @@ must_reload_page = False
 def start_flask():
   if not hasattr(st, 'already_started_server'):
     st.already_started_server = True
+    global must_reload_page
     must_reload_page = True
 
     from flask import Flask
@@ -19,8 +20,8 @@ def start_flask():
 
     app.run(port=8888)
 
-
 def reload_page():
+  global must_reload_page
   if must_reload_page:
     must_reload_page = False
     st.experimental_rerun()
