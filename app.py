@@ -21,11 +21,11 @@ if not hasattr(st, 'already_started_server'):
   #
   # app = Flask(__name__)
 
-  # @app.route('/foo')
-  # def serve_foo():
-  #   return 'This page is served via Flask!'
-
   app.run(port=8888)
+
+  @app.route('/foo')
+  def serve_foo():
+    return 'This page is served via Flask! FIRST'
 
 # We'll never reach this part of the code the first time this file executes!
 
@@ -36,4 +36,4 @@ st.write('You picked:', x)
 
 @app.route('/foo')
 def serve_foo():
-  return 'This page is served via Flask!'
+  return 'This page is served via Flask! Second'
