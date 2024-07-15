@@ -6,7 +6,8 @@
     "codespaces": {
       "openFiles": [
         "README.md",
-        "app.py"
+        "app.py",
+        "flaskes.py"
       ]
     },
     "vscode": {
@@ -17,17 +18,22 @@
       ]
     }
   },
-  "updateContentCommand": "[ -f packages.txt ] && sudo apt update && sudo apt upgrade -y && sudo xargs apt install -y <packages.txt; [ -f requirements.txt ] && pip3 install --user -r requirements.txt; pip3 install --user streamlit; echo '✅ Packages installed and Requirements met'",
+  "updateContentCommand": "[ -f packages.txt ] && sudo apt update && sudo apt upgrade -y && sudo xargs apt install -y <packages.txt; [ -f requirements.txt ] && pip3 install --user -r requirements.txt; pip3 install --user streamlit; echo '✅ Packages installed and Requirements met'; echo 'Setup flask...'; pip3 install --user flask; echo '✅ Flask is installed';",
   "postAttachCommand": {
-    "server": "streamlit run app.py --server.enableCORS false --server.enableXsrfProtection false"
+    "server": "streamlit run app.py --server.enableCORS false --server.enableXsrfProtection false & python3 flaskes.py"
   },
   "portsAttributes": {
     "8501": {
       "label": "Application",
       "onAutoForward": "openPreview"
+    },
+    "8888": {
+      "label": "Flask Application",
+      "onAutoForward": "openBrowser"
     }
   },
   "forwardPorts": [
-    8501
+    8501,
+    8888
   ]
 }
