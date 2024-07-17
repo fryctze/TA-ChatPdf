@@ -1,0 +1,169 @@
+{% extends 'layout.html' %}
+{% block title %}Dokumen{% endblock %}
+{% block nav_title %}Perbarui Dokumen{% endblock nav_title %}
+
+{% block content %}
+<div class="container-xxl flex-grow-1 container-p-y">
+
+    <div class="row invoice-edit">
+        <!-- Invoice Edit-->
+        <div class="col-lg-9 col-12 mb-lg-0 mb-6">
+            <div class="card p-sm-12 p-6">
+                <div class="card-body mt-3">
+                    <div class="row px-5">
+                        <div class="col-md-7 mb-md-0 mb-6 ps-0">
+                            <div class="d-flex svg-illustration mb-6 gap-2 align-items-center">
+                                <span class="app-brand-text demo fw-bold ms-50">Berkas Dokumen</span>
+                            </div>
+                            <p class="mb-2">
+                                Halaman ini adalah untuk update dokumen.
+                                Namun, vectorstore harus dibuat setiap merubah dokumen.
+                                Sedangkan dokumen yang diunggah harus berformat .pdf
+                            </p>
+                        </div>
+                        <div class="col-md-5 col-8 pe-0 ps-0 ps-md-2">
+                            <div class="d-md-flex align-items-center justify-content-end">
+                                {% if pdf_file %}
+                                <a href="{{ url_for('menus.document_download', filename=pdf_file) }}"
+                                target="_blank">
+                                <img class="d-block" width="150"
+                                     src="https://cdn.glitch.global/5bad605e-7b7c-4a65-b6fa-022756b410ff/document.png?v=1721165679064" alt="">
+                                </a>
+                                {% else %}
+                                <p class="px-2 py-1 border border-info rounded text-end">Belum ada dokumen yang diunggah.</p>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <hr class="mb-6 mt-0">
+                <div class="card-body mb-3">
+                    <div class="row px-5">
+                        <div class="col-md-6 col-sm-5 col-12 mb-sm-0 mb-6">
+                            <h6>Invoice To:</h6>
+                            <select class="form-select mb-4 w-50">
+                                <option value="Jordan Stevenson">Jordan Stevenson</option>
+                                <option value="Wesley Burland">Wesley Burland</option>
+                                <option value="Vladamir Koschek">Vladamir Koschek</option>
+                                <option value="Tyne Widmore">Tyne Widmore</option>
+                            </select>
+                            <p class="mb-1">Shelby Company Limited</p>
+                            <p class="mb-1">Small Heath, B10 0HF, UK</p>
+                            <p class="mb-1">718-986-6062</p>
+                            <p class="mb-0">peakyFBlinders@gmail.com</p>
+                        </div>
+                        <div class="col-md-6 col-sm-7">
+                            <h6>Bill To:</h6>
+                            <table>
+                                <tbody>
+                                <tr>
+                                    <td class="pe-4">Total Due:</td>
+                                    <td>$12,110.55</td>
+                                </tr>
+                                <tr>
+                                    <td class="pe-4">Bank name:</td>
+                                    <td>American Bank</td>
+                                </tr>
+                                <tr>
+                                    <td class="pe-4">Country:</td>
+                                    <td>United States</td>
+                                </tr>
+                                <tr>
+                                    <td class="pe-4">IBAN:</td>
+                                    <td>ETD95476213874685</td>
+                                </tr>
+                                <tr>
+                                    <td class="pe-4">SWIFT code:</td>
+                                    <td>BR91905</td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- /Invoice Edit-->
+
+        <!-- Invoice Actions -->
+        <div class="col-lg-3 col-12">
+            <div class="card mb-6">
+                <div class="card-body">
+
+                    <form enctype="multipart/form-data" method="post">
+                        {{ form.hidden_tag() }}
+                        <div class="form-group">
+                            {{ form.csrf_token }}
+                            {{ form.document.label(class="form-label") }}
+                            <p id="file-name" class="px-1 mb-0"></p>
+                            {% if form.document.errors %}
+                            <span class="text-danger">{{ form.document.errors[0] }}</span>
+                            {% endif %}
+                            <label for="file" class="btn btn-info d-grid w-100 mb-4 mt-1" tabindex="0">
+                                <span class="d-flex align-items-center justify-content-center text-nowrap">Pilih Dokumen</span>
+                                <i class="bx bx-upload bx-sm me-2"></i>
+                                {{ form.document(hidden="", accept="application/pdf", id="file") }}
+                            </label>
+                        </div>
+
+
+                        <button class="btn btn-primary d-grid w-100 mb-4" type="submit">
+          <span class="d-flex align-items-center justify-content-center text-nowrap">
+            <i class="bx bx-paper-plane bx-sm me-2"></i>Unggah</span>
+                    </button>
+                    </form>
+
+                    <!--<div class="d-flex my-4">
+                      <a href="./app-invoice-preview.html" class="btn btn-label-secondary w-100 me-4">Preview</a>
+                      <button type="button" class="btn btn-label-secondary w-100">Save</button>
+                    </div>-->
+                    <button class="btn btn-success d-grid w-100">
+          <span class="d-flex align-items-center justify-content-center text-nowrap">
+            <i class="bx bx-dollar bx-sm me-1"></i>Buat Vectorstore</span>
+                    </button>
+                </div>
+            </div>
+            <div>
+                <label class="form-label" for="acceptPaymentsVia">Accept payments via</label>
+                <select class="form-select mb-6" id="acceptPaymentsVia">
+                    <option value="Bank Account">Bank Account</option>
+                    <option value="Paypal">Paypal</option>
+                    <option value="Card">Credit/Debit Card</option>
+                    <option value="UPI Transfer">UPI Transfer</option>
+                </select>
+                <div class="d-flex justify-content-between mb-2">
+                    <label for="payment-terms">Payment Terms</label>
+                    <div class="form-check form-switch me-n2">
+                        <input checked="" class="form-check-input" id="payment-terms" type="checkbox">
+                    </div>
+                </div>
+                <div class="d-flex justify-content-between mb-2">
+                    <label for="client-notes">Client Notes</label>
+                    <div class="form-check form-switch me-n2">
+                        <input checked="" class="form-check-input" id="client-notes" type="checkbox">
+                    </div>
+                </div>
+                <div class="d-flex justify-content-between">
+                    <label for="payment-stub">Payment Stub</label>
+                    <div class="form-check form-switch me-n2">
+                        <input checked="" class="form-check-input" id="payment-stub" type="checkbox">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- /Invoice Actions -->
+    </div>
+
+</div>
+{% endblock content %}
+
+{% block scripts %}
+<script>
+    // Function to display selected file name
+    document.querySelector('#file').addEventListener('change', function() {
+        const fileInput = document.getElementById('file');
+        const fileNameContainer = document.getElementById('file-name');
+        fileNameContainer.textContent = fileInput.files[0].name;
+    });
+</script>
+{% endblock scripts %}

@@ -28,7 +28,7 @@ text_splitter = RecursiveCharacterTextSplitter(
     is_separator_regex=False,
 )
 pages = text_splitter.split_documents(loader.load())
-#pages = loader.load_and_split()
+#menu = loader.load_and_split()
 
 
 pages[32]
@@ -45,7 +45,7 @@ faiss_index = FAISS.from_documents(pages, OpenAIEmbeddings())
 # docs = loader.load()
 # text_splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=200)
 # splits = text_splitter.split_documents(docs)
-# vectorstore = Chroma.from_documents(documents=pages, embedding=OpenAIEmbeddings())
+# vectorstore = Chroma.from_documents(documents=menu, embedding=OpenAIEmbeddings())
 
 retriever = faiss_index.as_retriever()
 

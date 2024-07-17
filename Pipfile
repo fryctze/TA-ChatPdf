@@ -4,15 +4,17 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
+python-dotenv = "*"
 flask = "*"
-streamlit = "*"
+flask-wtf = "*"
+wtforms = "*"
+pypdf = "*"
+faiss-cpu = "*"
 langchain = "*"
 langchain-community = "*"
 langchain-openai = "*"
-pypdf = "*"
-faiss-cpu = "*"
 
 [dev-packages]
 
 [requires]
-python_version = "3.12"
+python_version = "3.12.4"
