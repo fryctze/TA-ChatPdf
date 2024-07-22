@@ -4,11 +4,13 @@ from quanta_quire.helper import delete_all_pdfs, get_first_pdf_file
 
 from quanta_quire.forms import UploadForm
 
-blueprint = Blueprint("menus", __name__)
+blueprint = Blueprint("website", __name__)
 
 
-@blueprint.route("/")
+@blueprint.route("/", methods=['GET', 'POST'])
 def chat():
+  #current_app.chats = 'tada'
+  current_app.logger.info("Rendered homepage chat")
   return render_template("menu/chat.html", page_name='chat')
 
 
@@ -22,7 +24,7 @@ def document():
     f.save(os.path.join(current_app.config['UPLOAD_PATH'], filename))
     flash('Upload success.')
     session['filename'] = [filename]
-    return redirect(url_for('menus.document'))
+    return redirect(url_for('website.document'))
 
   # Get the first PDF file in UPLOAD_FOLDER
   pdf_file = get_first_pdf_file()

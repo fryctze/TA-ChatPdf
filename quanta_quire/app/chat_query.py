@@ -78,6 +78,13 @@ def chat_rag_chain(rag_chain):
   )
 
 
+message = input("User: ")
+print(chat_rag_chain(rag_chain).invoke(
+  {"input": message},
+  config={"configurable": {"session_id": "abc123"}},
+)["answer"])
+
+
 def chat(retriever):
   question_template = history_aware_retriever(retriever)
   return rag_chain(question_template)

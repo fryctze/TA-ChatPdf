@@ -1,5 +1,17 @@
 import os
-from flask import current_app
+from flask import current_app, session
+import string
+import random
+
+
+def get_session_id():
+  if 'session_id' not in session:
+    session['session_id'] = rand_string()
+  return session['session_id']
+
+
+def rand_string():
+  return ''.join(random.choices(string.ascii_letters + string.digits, k=6))
 
 
 def get_first_pdf_file():
