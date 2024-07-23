@@ -22,52 +22,39 @@
                                 <small class="user-status text-body">Quanta Quire's Bot</small>
                             </div>
                         </div>
+                        <form class="d-flex align-items-center" id="session_id_form">
+                            <div class="alert alert-success me-1 m-auto small" id="success_session_id"
+                                 style="display: none;">
+                                Tersimpan!
+                            </div>
+                            <div class="alert alert-danger me-1 m-auto small" id="error_session_id"
+                                 style="display: none;">
+                                Gagal!
+                            </div>
+
+
+                            <label class="form-label d-sm-inline-flex d-none m-auto me-1"
+                                   for="session_id">userid</label>
+                            <input class="form-control form-control-sm d-sm-inline-flex d-none me-1" id="session_id"
+                                   type="text"
+                                   value="{{ session_id }}">
+                            <button class="d-sm-inline-flex d-none me-1 btn btn-outline-primary btn-icon btn-sm"
+                                    type="submit">
+                                <i class="bx bxs-save"></i>
+                            </button>
+                        </form>
                     </div>
                 </div>
-                <div id="chat-box" class="chat-history">
+                <div class="chat-history" id="chat-box">
                     <ul class="m-b-0">
-                        <!--<li class="clearfix mb-3">
-                            <div class="d-flex overflow-hidden">
-                                <div class="user-avatar flex-shrink-0 me-4">
-                                    <div class="avatar avatar-md">
-                                        <img alt="Avatar" class="rounded-circle"
-                                             src="https://cdn.glitch.global/5bad605e-7b7c-4a65-b6fa-022756b410ff/ai-me-4-0.png?v=1721273881457">
-                                    </div>
-                                </div>
-                                <div class="chat-message-wrapper flex-grow-1">
-                                    <div class="message other-message py-2 px-3 text-start">
-                                        <p class="mb-0">
-                                            Do you have design files for sneat? Do you have design files for sneat?
-                                            Do you have design files for sneat? Do you have design files for sneat?
-                                            Do you have design files for sneat? Do you have design files for sneat?
-                                        </p>
-                                    </div>
-                                    <div class="text-muted">
-                                        <small>10:15 AM</small>
-                                    </div>
-                                </div>
-                            </div>
-                        </li>
-                        <li class="clearfix mb-3">
-                            <div class="d-flex overflow-hidden">
-                                <div class="flex-grow-1 w-50">
-                                    <div class="message my-message float-right bg-primary text-white py-2 px-3 text-end">
-                                        <p class="mb-0 text-break">Yes that's correct
-                                            documentation file, Design files are included with the template.</p>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="text-end text-muted">
-                                <small>10:15 AM</small>
-                            </div>
-                        </li>-->
+                        <!-- chat content -->
                     </ul>
                 </div>
                 <div class="chat-message clearfix shadow-xs">
-                    <form id="chat-form"
-                          class="form-send-message d-flex justify-content-between align-items-center ">
-                        <input id="message" class="form-control me-4"
-                               placeholder="Ketik pesan Anda di sini...">
+                    <form class="form-send-message d-flex justify-content-between align-items-center "
+                          id="chat-form">
+                        <input aria-required="true" class="form-control me-4" id="message" placeholder="Ketik pesan Anda di sini..."
+                               required>
                         <div class="message-actions d-flex align-items-center">
                             <button class="btn btn-primary d-flex send-msg-btn" type="submit">
                                 <span class="align-middle d-md-inline-block d-none">Kirim</span>
@@ -75,7 +62,11 @@
                             </button>
                         </div>
                     </form>
+                    <div class="alert alert-danger mt-3 p-2 m-auto small" style="display: none;" id="error_chat">
+                        Gagal!
+                    </div>
                 </div>
+
             </div>
         </div>
     </div>
@@ -85,28 +76,35 @@
 
 {% block scripts %}
 <script>
-    $(document).ready(function(){
+    $(document).ready(function () {
         const chat_box = $('#chat-box ul');
         const input = $('#message');
-        $('#chat-form').on('submit', function(e){
+        const session_id = $('#session_id');
+        $('#chat-form').on('submit', function (e) {
             e.preventDefault();
             const userMessage = input.val();
+
+            if (userMessage.trim() === '') {
+                return;
+            }
+
             chat_box.append('<li class="clearfix mb-3 user-message"><div class="d-flex overflow-hidden"><div class="chat-message-wrapper flex-grow-1"><div class="message my-message float-right bg-primary text-white py-2 px-3 text-end"><p class="mb-0 text-break">' + userMessage + '</p></div></div></div></li>');
             input.val('');
+            chat_box.scrollTop(chat_box[0].scrollHeight);
 
-            chat_box.append('<li class="clearfix mb-3 bot-message"><div class="d-flex overflow-hidden"><div class="user-avatar flex-shrink-0 me-4"><div class="avatar avatar-md"><img alt="Avatar" class="rounded-circle" src="https://cdn.glitch.global/5bad605e-7b7c-4a65-b6fa-022756b410ff/ai-me-4-0.png?v=1721273881457"></div></div><div class="chat-message-wrapper flex-grow-1"><div class="message other-message py-2 px-3 text-start"><p class="mb-0"> Do you have design files for sneat? Do you have design files for sneat? Do you have design files for sneat? Do you have design files for sneat? Do you have design files for sneat? Do you have design files for sneat? Do you have design files for sneat? Do you have design files for sneat? </p></div></div></div></li>');
+            /*chat_box.append('<li class="clearfix mb-3 bot-message"><div class="d-flex overflow-hidden"><div class="user-avatar flex-shrink-0 me-4"><div class="avatar avatar-md"><img alt="Avatar" class="rounded-circle" src="https://cdn.glitch.global/5bad605e-7b7c-4a65-b6fa-022756b410ff/ai-me-4-0.png?v=1721273881457"></div></div><div class="chat-message-wrapper flex-grow-1"><div class="message other-message py-2 px-3 text-start"><p class="mb-0"> Do you have design files for sneat? Do you have design files for sneat? Do you have design files for sneat? Do you have design files for sneat? Do you have design files for sneat? Do you have design files for sneat? Do you have design files for sneat? Do you have design files for sneat? </p></div></div></div></li>');
 
-            $('#chat-box').scrollTop(chat_box[0].scrollHeight);
+            $('#chat-box').scrollTop(chat_box[0].scrollHeight);*/
 
-            /*$.ajax({
+            $.ajax({
                 url: "{{ url_for('webchat.web_chatting') }}",
                 method: 'POST',
                 data: JSON.stringify({ message: userMessage }),
                 contentType: "application/json",
                 dataType: 'json',
                 success: function(response){
-                    $('#chat-box ul').append('<li class="clearfix mb-3 bot-message"><div class="d-flex overflow-hidden"><div class="user-avatar flex-shrink-0 me-4"><div class="avatar avatar-md"><img alt="Avatar" class="rounded-circle" src="https://cdn.glitch.global/5bad605e-7b7c-4a65-b6fa-022756b410ff/ai-me-4-0.png?v=1721273881457"></div></div><div class="chat-message-wrapper flex-grow-1"><div class="message other-message py-2 px-3"><p class="mb-0">' + response.response + '</p></div></div></div></li>');
-                    $('#chat-box').scrollTop($('#chat-box')[0].scrollHeight);
+                    $('#chat-box ul').append('<li class="clearfix mb-3 bot-message"><div class="d-flex overflow-hidden"><div class="user-avatar flex-shrink-0 me-4"><div class="avatar avatar-md"><img alt="Avatar" class="rounded-circle" src="https://cdn.glitch.global/5bad605e-7b7c-4a65-b6fa-022756b410ff/ai-me-4-0.png?v=1721273881457"></div></div><div class="chat-message-wrapper flex-grow-1"><div class="message other-message py-2 px-3 text-start"><p class="mb-0">' + response.response + '</p></div></div></div></li>');
+                    chat_box.scrollTop(chat_box[0].scrollHeight);
                 },
                 error: function(xhr, status, error){
                     console.error("Error: " + error);
@@ -114,7 +112,31 @@
                     console.error("Response: " + xhr.responseText);
                     alert("An error occurred. Please try again.");
                 }
-            });*/
+            });
+        });
+
+        $('#session_id_form').on('submit', function (e) {
+            e.preventDefault();
+            if (session_id.val().trim() === '') {
+                $('#error_session_id').text('Tidak boleh kosong').fadeIn().delay(3000).fadeOut();
+                return;
+            }
+            $.ajax({
+                url: "{{ url_for('webchat.update_session_id') }}",
+                method: 'POST',
+                data: JSON.stringify({message: session_id.val()}),
+                contentType: "application/json",
+                dataType: 'json',
+                success: function (response) {
+                    $('#success_session_id').fadeIn().delay(3000).fadeOut();
+                },
+                error: function (xhr, status, error) {
+                    console.error("Error: " + error);
+                    console.error("Status: " + status);
+                    console.error("Response: " + xhr.responseText);
+                    alert("An error occurred. Please try again.");
+                }
+            });
         });
     });
 </script>

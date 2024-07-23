@@ -66,7 +66,7 @@ from langchain_core.messages import (
     HumanMessage
 )
 
-llm = ChatOpenAI(
+llms = ChatOpenAI(
     model="gpt-3.5-turbo"
 )
 

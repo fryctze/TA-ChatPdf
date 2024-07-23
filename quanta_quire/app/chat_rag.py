@@ -7,16 +7,12 @@ from langchain_community.chat_message_histories import ChatMessageHistory
 from langchain_core.runnables.history import RunnableWithMessageHistory
 from langchain_core.chat_history import BaseChatMessageHistory
 
-# Statefully manage chat history ###
-store = {}
-
-llm = ChatOpenAI(
-  model="gpt-3.5-turbo"
-)
+from quanta_quire.app import llm, get_rag_chat_log
+from quanta_quire.data import save_data
 
 
 def history_aware_retriever(retriever):
-  # Contextualize question ###
+  # Contextualize question for chat history
   contextualize_q_system_prompt = (
     "Given a chat history and the latest user question "
     "which might reference context in the chat history, "
@@ -37,14 +33,17 @@ def history_aware_retriever(retriever):
   )
 
 
-def rag_chain(history_aware_retriever):
-  # Answer question ###
+def rag_chain(retriever):
+  # System prompt for answer
   system_prompt = (
-    # "You are a customer support that can help with whatever user need about information related to the retrieved context. "
-    "You are an assistant for question-answering tasks. "
-    "Use the following pieces of retrieved context to answer "
-    "the question. If you don't know the answer, say that you "
-    "don't know. Use three sentences maximum and keep the answer concise."
+    "You are a customer support that can help with whatever user "
+    "need about information related, especially to the retrieved context. "
+    #"You are an assistant for question-answering tasks. "
+    #"Use the following pieces of retrieved context to answer the question."
+    #"If you don't know the answer, see the previous conversation to find the answer."
+    #"Then, if you still don't know the answer, say that you don't know. "
+    #"If you don't know the answer, say that you don't know. "
+    "Use three sentences maximum and keep the answer concise."
     "response with Bahasa Indonesia. response as other language if i told you to do so."
     # "Also please inform me about the source page number of your answer."
     "\n\n"
@@ -59,49 +58,23 @@ def rag_chain(history_aware_retriever):
   )
   question_answer_chain = create_stuff_documents_chain(llm, qa_prompt)
 
-  return create_retrieval_chain(history_aware_retriever, question_answer_chain)
+  return create_retrieval_chain(history_aware_retriever(retriever), question_answer_chain)
 
 
-def get_session_history(session_id: str) -> BaseChatMessageHistory:
-  if session_id not in store:
-    store[session_id] = ChatMessageHistory()
-  return store[session_id]
-
-
-def chat_rag_chain(rag_chain):
+def chat_rag_chain(retriever):
   return RunnableWithMessageHistory(
-    rag_chain,
-    get_session_history,
+    rag_chain(retriever),
+    get_rag_chat_log,
     input_messages_key="input",
     history_messages_key="chat_history",
     output_messages_key="answer",
   )
 
 
-message = input("User: ")
-print(chat_rag_chain(rag_chain).invoke(
-  {"input": message},
-  config={"configurable": {"session_id": "abc123"}},
-)["answer"])
-
-
-def chat(retriever):
-  question_template = history_aware_retriever(retriever)
-  return rag_chain(question_template)
-
-
-def test():
-  while True:
-    # Prompt user for input
-    message = input("User: ")
-
-    # Exit program if user inputs "quit"
-    if message.lower() == "quit":
-      break
-
-    # print(chat_rag_chain(rag_chain).invoke(
-    #   {"input": message},
-    #   config={"configurable": {"session_id": "abc123"}},
-    # )["answer"])
-
-    print(store)
+def rag_chat(retriever, session_id, message):
+  response = chat_rag_chain(retriever).invoke(
+    {"input": message},
+    config={"configurable": {"session_id": session_id}},
+  )["answer"]
+  # save_data(chats)
+  return response

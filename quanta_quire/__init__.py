@@ -1,6 +1,6 @@
 import os
 from flask import Flask
-from quanta_quire.blueprints import website, webchat
+from quanta_quire.blueprints import website, webchat, webapp
 import logging
 
 
@@ -22,6 +22,7 @@ def start_app():
 def register_blueprints(app):
   app.register_blueprint(website.blueprint)
   app.register_blueprint(webchat.blueprint)
+  app.register_blueprint(webapp.blueprint)
 
 
 def register_config(app):

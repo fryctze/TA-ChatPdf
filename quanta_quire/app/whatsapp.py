@@ -3,8 +3,6 @@ import requests
 import random
 from quanta_quire.helper import custom_responses
 
-verify_token = current_app.config['VERIFY_TOKEN']
-whatsapp_token = current_app.config['WHATSAPP_TOKEN']
 
 
 # Required webhook verifictaion for WhatsApp
@@ -18,7 +16,7 @@ def verify(request):
   # Check if a token and mode were sent
   if mode and token:
     # Check the mode and token sent are correct
-    if mode == "subscribe" and token == verify_token:
+    if mode == "subscribe" and token == current_app.config['VERIFY_TOKEN']:
       # Respond with 200 OK and challenge token from the request
       print("WEBHOOK_VERIFIED")
       return challenge, 200
@@ -107,7 +105,7 @@ def send_whatsapp_message(body, message):
     phone_number_id = value["metadata"]["phone_number_id"]
     from_number = value["messages"][0]["from"]
     headers = {
-        "Authorization": f"Bearer {whatsapp_token}",
+        "Authorization": f"Bearer {current_app.config['WHATSAPP_TOKEN']}",
         "Content-Type": "application/json",
     }
     url = "https://graph.facebook.com/v20.0/" + phone_number_id + "/messages"

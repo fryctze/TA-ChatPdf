@@ -1,7 +1,11 @@
 import os
+import shutil
+
 from flask import current_app, session
 import string
 import random
+
+from pypdf import PdfReader
 
 
 def get_session_id():
@@ -20,6 +24,13 @@ def get_first_pdf_file():
       return filename
   return None
 
+def get_pdf_page_num():
+  pdf_file = get_first_pdf_file()
+  if pdf_file is not None:
+    pdf_pages = PdfReader(os.path.join(current_app.config['UPLOAD_PATH'], pdf_file))
+    return len(pdf_pages.pages)
+  return 0
+
 
 def delete_all_pdfs():
   for filename in os.listdir(current_app.config['UPLOAD_PATH']):
@@ -28,10 +39,10 @@ def delete_all_pdfs():
 
 
 def delete_all_vectorstore():
-  for filename in os.listdir(current_app.config['UPLOAD_PATH']):
-    if filename.endswith('.index'):
-      os.remove(os.path.join(current_app.config['UPLOAD_PATH'], filename))
-
+  vectorstore_path = os.path.join(current_app.config['UPLOAD_PATH'], "vectorstore")
+  if os.path.exists(vectorstore_path) and os.path.isdir(vectorstore_path):
+    shutil.rmtree(vectorstore_path)
+  return
 
 custom_responses = {
   "hello": [
