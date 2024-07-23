@@ -1,7 +1,6 @@
 from flask import request, jsonify, Blueprint, current_app, session
 
 from quanta_quire.app.chat import chat
-from quanta_quire.app.experiment import with_message_history
 from quanta_quire.helper import get_session_id
 
 blueprint = Blueprint("webchat", __name__)

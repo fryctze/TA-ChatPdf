@@ -1,6 +1,8 @@
 from flask import Flask, jsonify, request, current_app
 import requests
 import random
+
+from quanta_quire.app.chat import chat
 from quanta_quire.helper import custom_responses
 
 
@@ -72,8 +74,8 @@ def handle_whatsapp_message(body):
   #   message_body = handle_audio_message(audio_id)
 
   # TODO: Disable this to reduce AI token usage for testing
-  # response = make_openai_request(message_body, message["from"])
-  response = random_response(message_body, message["from"])
+  response = make_openai_request(message_body, message["from"])
+  #response = random_response(message_body, message["from"])
   send_whatsapp_message(body, response)
 
 
@@ -119,3 +121,15 @@ def send_whatsapp_message(body, message):
     response = requests.post(url, json=data, headers=headers)
     print(f"whatsapp message response: {response.json()}")
     response.raise_for_status()
+
+
+def make_openai_request(message, from_number):
+  try:
+    current_app.logger.info(from_number)
+    current_app.logger.info(message)
+    response_message = chat(from_number, message)
+    print(f"openai response: {response_message}")
+  except Exception as e:
+    print(f"openai error: {e}")
+    response_message = "Mohon maaf, API OpenAI saat ini sedang sibuk atau tidak terhubung. Silahkan coba lagi nanti."
+  return response_message

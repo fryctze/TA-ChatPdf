@@ -1,7 +1,12 @@
 import os
+
+from chromadb.segment.impl.vector.hnsw_params import persistent_param_validators
+from chromadb.utils.embedding_functions.openai_embedding_function import OpenAIEmbeddingFunction
+from openai import embeddings
+
 from quanta_quire.helper import get_first_pdf_file, delete_all_vectorstore, delete_all_pdfs
 from langchain_text_splitters import RecursiveCharacterTextSplitter
-from langchain_community.vectorstores import FAISS
+from langchain_community.vectorstores import FAISS, Chroma
 from langchain_openai import OpenAIEmbeddings
 from langchain_community.document_loaders import PyPDFLoader
 
@@ -10,9 +15,11 @@ from flask import current_app
 
 def generate_vectorstore(chunks):
   try:
-    vectorstore = create_vectorstore(chunks)
     delete_all_vectorstore()
-    vectorstore.save_local(os.path.join(current_app.config['UPLOAD_PATH'], "vectorstore"))
+    vectorstore = create_vectorstore(chunks)
+    #delete_all_vectorstore()
+    #vectorstore.save_local(os.path.join(current_app.config['UPLOAD_PATH'], "vectorstore"))
+
     # example = faiss_index.similarity_search("Bagaimana cara mendapatkan poin sosial?", k=2)
   except Exception as e:
     current_app.logger.info(e)
@@ -21,12 +28,14 @@ def generate_vectorstore(chunks):
 
 
 def load_vectorstore():
-  db = FAISS.load_local(
-    folder_path=os.path.join(current_app.config['UPLOAD_PATH'], "vectorstore"),
-    #index_name="vectorstore.index",
-    embeddings=OpenAIEmbeddings(),
-    allow_dangerous_deserialization=True
-  )
+  db = Chroma(persist_directory=os.path.join(current_app.config['UPLOAD_PATH'], "vectorstore"),
+              embedding_function=OpenAIEmbeddings())
+  # db = FAISS.load_local(
+  #   folder_path=os.path.join(current_app.config['UPLOAD_PATH'], "vectorstore"),
+  #   #index_name="vectorstore.index",
+  #   embeddings=OpenAIEmbeddings(),
+  #   allow_dangerous_deserialization=True
+  # )
   return db
 
 
@@ -47,5 +56,8 @@ def splitter(split_size, split_overlap):
 
 
 def create_vectorstore(chunks):
-  faiss_index = FAISS.from_documents(chunks, OpenAIEmbeddings())
+  faiss_index = Chroma.from_documents(documents=chunks,
+                                      embedding=OpenAIEmbeddings(),
+                                      persist_directory=os.path.join(current_app.config['UPLOAD_PATH'], "vectorstore"))
+  # faiss_index = FAISS.from_documents(chunks, OpenAIEmbeddings())
   return faiss_index

@@ -4,6 +4,14 @@
 {% endblock styles %}
 {% block title %}Chat{% endblock %}
 {% block nav_title %}Chat{% endblock nav_title %}
+{% block breadcrumb %}
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb mb-0">
+        <li class="breadcrumb-item"><a href="#">Aplikasi</a></li>
+        <li aria-current="page" class="breadcrumb-item active">Chat</li>
+    </ol>
+</nav>
+{% endblock breadcrumb %}
 
 {% block content %}
 <div class="container-xxl flex-grow-1 container-p-y">
@@ -53,7 +61,8 @@
                 <div class="chat-message clearfix shadow-xs">
                     <form class="form-send-message d-flex justify-content-between align-items-center "
                           id="chat-form">
-                        <input aria-required="true" class="form-control me-4" id="message" placeholder="Ketik pesan Anda di sini..."
+                        <input aria-required="true" class="form-control me-4" id="message"
+                               placeholder="Ketik pesan Anda di sini..."
                                required>
                         <div class="message-actions d-flex align-items-center">
                             <button class="btn btn-primary d-flex send-msg-btn" type="submit">
@@ -62,7 +71,7 @@
                             </button>
                         </div>
                     </form>
-                    <div class="alert alert-danger mt-3 p-2 m-auto small" style="display: none;" id="error_chat">
+                    <div class="alert alert-danger mt-3 p-2 m-auto small" id="error_chat" style="display: none;">
                         Gagal!
                     </div>
                 </div>
@@ -99,14 +108,14 @@
             $.ajax({
                 url: "{{ url_for('webchat.web_chatting') }}",
                 method: 'POST',
-                data: JSON.stringify({ message: userMessage }),
+                data: JSON.stringify({message: userMessage}),
                 contentType: "application/json",
                 dataType: 'json',
-                success: function(response){
+                success: function (response) {
                     $('#chat-box ul').append('<li class="clearfix mb-3 bot-message"><div class="d-flex overflow-hidden"><div class="user-avatar flex-shrink-0 me-4"><div class="avatar avatar-md"><img alt="Avatar" class="rounded-circle" src="https://cdn.glitch.global/5bad605e-7b7c-4a65-b6fa-022756b410ff/ai-me-4-0.png?v=1721273881457"></div></div><div class="chat-message-wrapper flex-grow-1"><div class="message other-message py-2 px-3 text-start"><p class="mb-0">' + response.response + '</p></div></div></div></li>');
                     chat_box.scrollTop(chat_box[0].scrollHeight);
                 },
-                error: function(xhr, status, error){
+                error: function (xhr, status, error) {
                     console.error("Error: " + error);
                     console.error("Status: " + status);
                     console.error("Response: " + xhr.responseText);

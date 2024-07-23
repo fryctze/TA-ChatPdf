@@ -1,9 +1,7 @@
 from langchain_core.messages import HumanMessage
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 from langchain_core.runnables import RunnableWithMessageHistory
-
 from quanta_quire.app import llm, get_chat_log
-from quanta_quire.data import save_data
 
 prompt = ChatPromptTemplate.from_messages(
   [(

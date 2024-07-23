@@ -1,6 +1,15 @@
 {% extends 'layout.html' %}
 {% block title %}Dokumen{% endblock %}
 {% block nav_title %}Perbarui Dokumen{% endblock nav_title %}
+{% block breadcrumb %}
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb mb-0">
+        <li class="breadcrumb-item"><a href="#">Aplikasi</a></li>
+        <li class="breadcrumb-item"><a href="#">Pengaturan</a></li>
+        <li aria-current="page" class="breadcrumb-item active">Dokumen</li>
+    </ol>
+</nav>
+{% endblock breadcrumb %}
 
 {% block content %}
 <div class="container-xxl flex-grow-1 container-p-y">
