@@ -57,28 +57,20 @@
                             <p class="mb-0">Halaman berjumlah {{ pdf_pages }}</p>
                         </div>
                         <div class="col-md-6 col-sm-7">
-                            <h6>Bill To:</h6>
+                            <h6>Detail:</h6>
                             <table>
                                 <tbody>
                                 <tr>
-                                    <td class="pe-4">Total Due:</td>
-                                    <td>$12,110.55</td>
+                                    <td class="pe-4">Vectorstore:</td>
+                                    <td>Chroma</td>
                                 </tr>
                                 <tr>
-                                    <td class="pe-4">Bank name:</td>
-                                    <td>American Bank</td>
+                                    <td class="pe-4">Split size:</td>
+                                    <td>{{ size }}</td>
                                 </tr>
                                 <tr>
-                                    <td class="pe-4">Country:</td>
-                                    <td>United States</td>
-                                </tr>
-                                <tr>
-                                    <td class="pe-4">IBAN:</td>
-                                    <td>ETD95476213874685</td>
-                                </tr>
-                                <tr>
-                                    <td class="pe-4">SWIFT code:</td>
-                                    <td>BR91905</td>
+                                    <td class="pe-4">Overlap:</td>
+                                    <td>{{ overlap }}</td>
                                 </tr>
                                 </tbody>
                             </table>
@@ -105,7 +97,7 @@
                             {% if form.document.errors %}
                             <span class="text-danger">{{ form.document.errors[0] }}</span>
                             {% endif %}
-                            <label class="btn btn-info d-grid w-100 mb-4 mt-1" for="file" tabindex="0">
+                            <label class="btn btn-info d-grid w-100 mb-4 mt-1" for="file" tabindex="0" disabled>
                                 <span class="d-flex align-items-center justify-content-center text-nowrap">Pilih Dokumen</span>
                                 <i class="bx bx-upload bx-sm me-2"></i>
                                 {{ form.document(hidden="", accept="application/pdf", id="file") }}
@@ -113,7 +105,7 @@
                         </div>
 
 
-                        <button class="btn btn-primary d-grid w-100" type="submit">
+                        <button class="btn btn-primary d-grid w-100" type="submit" disabled>
           <span class="d-flex align-items-center justify-content-center text-nowrap">
             <i class="bx bx-paper-plane bx-sm me-2"></i>Unggah</span>
                         </button>

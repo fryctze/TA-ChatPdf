@@ -1,7 +1,11 @@
 import os
 from flask import Flask
+
+from quanta_quire.app.vectorstore import create_faiss, splitter, splitter_from_web, create_chroma, create_scikit
 from quanta_quire.blueprints import website, webchat, webapp
 import logging
+
+from quanta_quire.helper import get_first_pdf_file
 
 
 def start_app():
@@ -9,6 +13,14 @@ def start_app():
 
   chats = {}
   app.chats = chats
+# /tmp/venv/lib/python3.10/site-packages/langchain_core/utils/utils.py
+  splitter = splitter_from_web(
+    1000,
+    200,
+    "https://cdn.glitch.global/3d92198f-56d0-4fd6-87c3-3626f4e81afa/Student-Guide-UMC-2023.pdf"
+  )
+  vectorstore = create_scikit(splitter)
+  app.vectorstore = vectorstore
 
   logging.basicConfig(level=logging.DEBUG)
 

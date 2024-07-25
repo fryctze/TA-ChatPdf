@@ -23,6 +23,9 @@ def document():
   size = 1000
   overlap = 200
 
+  #if get_first_pdf_file() is not None:
+
+
   form = UploadForm()
   if form.validate_on_submit():
     delete_all_pdfs()
@@ -39,6 +42,7 @@ def document():
   # Get the first PDF file in UPLOAD_FOLDER
   pdf_file = get_first_pdf_file()
   pdf_pages = get_pdf_page_num()
+
 
   context = {
     'page_name': 'document',

@@ -15,8 +15,13 @@ langchain-community = "*"
 langchain-openai = "*"
 gunicorn = "*"
 langchain-chroma = "*"
+pypdf2 = "*"
+chromadb = "*"
+scikit-learn = "*"
+pandas = "*"
+pyarrow = "*"
 
 [dev-packages]
 
 [requires]
-python_version = "3.12.4"
+python_version = "3.11.9"
