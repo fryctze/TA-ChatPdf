@@ -16,11 +16,7 @@ faiss-cpu = "^1.8.0.post1"
 langchain = "^0.2.11"
 langchain-community = "^0.2.10"
 langchain-openai = "^0.1.17"
-langchain-chroma = "^0.1.2"
 gunicorn = "^22.0.0"
-scikit-learn = "^1.5.1"
-pandas = "^2.2.2"
-pyarrow = "^17.0.0"
 
 
 [build-system]

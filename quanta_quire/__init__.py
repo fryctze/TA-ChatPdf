@@ -1,7 +1,7 @@
 import os
 from flask import Flask
 
-from quanta_quire.app.vectorstore import create_faiss, splitter, splitter_from_web, create_chroma, create_scikit
+from quanta_quire.app.vectorstore import create_faiss, splitter, splitter_from_web
 from quanta_quire.blueprints import website, webchat, webapp, second
 import logging
 

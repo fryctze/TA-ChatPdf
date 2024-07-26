@@ -6,8 +6,9 @@ from pypdf import PdfReader
 
 from quanta_quire.helper import get_first_pdf_file, delete_all_vectorstore, delete_all_pdfs
 from langchain_text_splitters import RecursiveCharacterTextSplitter
-from langchain_community.vectorstores import FAISS, SKLearnVectorStore
-from langchain_chroma import Chroma
+from langchain_community.vectorstores import FAISS
+# from langchain_community.vectorstores import FAISS, SKLearnVectorStore
+# from langchain_chroma import Chroma
 
 from langchain_openai import OpenAIEmbeddings
 from langchain_community.document_loaders import PyPDFLoader
@@ -38,10 +39,10 @@ def faiss_load_vectorstore():
     allow_dangerous_deserialization=True
   )
 
-def load_vectorstore():
-  db = Chroma(persist_directory=os.path.join(current_app.config['UPLOAD_PATH'], "vectorstore"),
-              embedding_function=OpenAIEmbeddings())
-  return db
+# def load_vectorstore():
+#   db = Chroma(persist_directory=os.path.join(current_app.config['UPLOAD_PATH'], "vectorstore"),
+#               embedding_function=OpenAIEmbeddings())
+#   return db
 
 
 def load_pdfs(files):
@@ -84,23 +85,23 @@ def splitter_from_web(split_size, split_overlap, pdf_url):
   #return text_splitter.split_documents(reader.load())
   return text_splitter.split_documents(documents)
 
-def create_vectorstore(chunks):
-  return Chroma.from_documents(documents=chunks,
-                                      embedding=OpenAIEmbeddings(),
-                                      persist_directory=os.path.join(current_app.config['UPLOAD_PATH'], "vectorstore"))
+# def create_vectorstore(chunks):
+#   return Chroma.from_documents(documents=chunks,
+#                                       embedding=OpenAIEmbeddings(),
+#                                       persist_directory=os.path.join(current_app.config['UPLOAD_PATH'], "vectorstore"))
 
 
 def create_faiss(chunks):
   faiss_index = FAISS.from_documents(chunks, OpenAIEmbeddings())
   return faiss_index
-def create_chroma(chunks):
-  db = Chroma.from_documents(documents=chunks,embedding=OpenAIEmbeddings())
-  return db
-def create_scikit(chunks):
-  db = SKLearnVectorStore.from_documents(
-    documents=chunks,
-    embedding=OpenAIEmbeddings(),
-    serializer="parquet",
-  )
-  return db
+# def create_chroma(chunks):
+#   db = Chroma.from_documents(documents=chunks,embedding=OpenAIEmbeddings())
+#   return db
+# def create_scikit(chunks):
+#   db = SKLearnVectorStore.from_documents(
+#     documents=chunks,
+#     embedding=OpenAIEmbeddings(),
+#     serializer="parquet",
+#   )
+#   return db
 
