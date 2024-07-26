@@ -3,7 +3,7 @@ import os
 from pypdf import PdfReader
 from flask import Blueprint, render_template, current_app, flash, session, redirect, url_for, send_from_directory
 
-from quanta_quire.app.vectorstore import splitter, generate_vectorstore
+from quanta_quire.app.vectorstore import splitter, generate_vectorstore, create_chroma
 from quanta_quire.helper import delete_all_pdfs, get_first_pdf_file, get_pdf_page_num, get_session_id
 from quanta_quire.forms import UploadForm
 
@@ -12,7 +12,6 @@ blueprint = Blueprint("website", __name__)
 
 @blueprint.route("/", methods=['GET', 'POST'])
 def chat():
-  #current_app.chats = 'tada'
   current_app.logger.info("Rendered homepage chat")
   user = get_session_id()
   return render_template("menu/chat.html", page_name='chat', session_id=user)
@@ -35,13 +34,17 @@ def document():
     flash('Upload success.')
 
     chunks = splitter(size, overlap)
-    generate_vectorstore(chunks)
+    current_app.chunks = len(chunks)
+    # generate_vectorstore(chunks)
+    create_chroma(chunks)
 
     return redirect(url_for('website.document'))
 
   # Get the first PDF file in UPLOAD_FOLDER
   pdf_file = get_first_pdf_file()
   pdf_pages = get_pdf_page_num()
+  chunks = 0 if pdf_file is None else len(splitter(size, overlap)) if current_app.chunks == 0 else current_app.chunks
+  current_app.chunks = chunks
 
 
   context = {
@@ -51,6 +54,7 @@ def document():
     'form': form,
     'size': size,
     'overlap': overlap,
+    'chunks': chunks
   }
   return render_template("menu/document.html", **context)
 

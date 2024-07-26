@@ -2,30 +2,34 @@ import os
 from flask import Flask
 
 from quanta_quire.app.vectorstore import create_faiss, splitter, splitter_from_web, create_chroma, create_scikit
-from quanta_quire.blueprints import website, webchat, webapp
+from quanta_quire.blueprints import website, webchat, webapp, second
 import logging
-
-from quanta_quire.helper import get_first_pdf_file
 
 
 def start_app():
   app = Flask(__name__)
 
-  chats = {}
-  app.chats = chats
+
 # /tmp/venv/lib/python3.10/site-packages/langchain_core/utils/utils.py
-  splitter = splitter_from_web(
-    1000,
-    200,
-    "https://cdn.glitch.global/3d92198f-56d0-4fd6-87c3-3626f4e81afa/Student-Guide-UMC-2023.pdf"
-  )
-  vectorstore = create_scikit(splitter)
-  app.vectorstore = vectorstore
+  # splitter = splitter_from_web(
+  #   1000,
+  #   200,
+  #   "https://cdn.glitch.global/3d92198f-56d0-4fd6-87c3-3626f4e81afa/Student-Guide-UMC-2023.pdf"
+  # )
+  # vectorstore = create_scikit(splitter)
+  # app.vectorstore = vectorstore
 
   logging.basicConfig(level=logging.DEBUG)
 
   register_config(app)
   register_blueprints(app)
+
+  chats = {}
+  app.chats = chats
+  chunks = 0
+  app.chunks = chunks
+  feedbacks = {}
+  app.feedbacks = feedbacks
 
   # default port is 5000
   return app
@@ -35,6 +39,7 @@ def register_blueprints(app):
   app.register_blueprint(website.blueprint)
   app.register_blueprint(webchat.blueprint)
   app.register_blueprint(webapp.blueprint)
+  # app.register_blueprint(second.blueprint)
 
 
 def register_config(app):

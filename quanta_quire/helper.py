@@ -1,11 +1,71 @@
+import json
 import os
 import shutil
+import threading
+from datetime import datetime
 
 from flask import current_app, session
 import string
 import random
+import requests
 
 from pypdf import PdfReader
+
+lock = threading.Lock()
+FEEDBACK_FILE = 'feedbacks.json'
+RECEIVING_APP_URL = "https://quanta-quire.glitch.me"
+
+
+def append_chat_log(question, answer, point):
+  with lock:
+    now = datetime.now()
+    formated_time = now.strftime("%Y.%m.%d-%H:%M:%S")
+
+    if not os.path.exists(FEEDBACK_FILE):
+      with open(FEEDBACK_FILE, 'w') as file:
+        json.dump([], file)
+
+    with open(FEEDBACK_FILE, 'r+') as file:
+      chat_log = json.load(file)
+      chat_entry = {
+        'timestamp': formated_time,
+        'question': question,
+        'answer': answer,
+        'point': point
+      }
+      chat_log.append(chat_entry)
+      file.seek(0)
+      json.dump(chat_log, file, indent=4)
+
+
+def append_feedback_log(chat_entry):
+  with lock:
+    if not os.path.exists(FEEDBACK_FILE):
+      with open(FEEDBACK_FILE, 'w') as file:
+        json.dump([], file)
+
+    with open(FEEDBACK_FILE, 'r+') as file:
+      chat_log = json.load(file)
+      chat_log.append(chat_entry)
+      file.seek(0)
+      json.dump(chat_log, file, indent=4)
+
+
+def send_feedback_log(question, answer, point):
+  now = datetime.now()
+  formated_time = now.strftime("%Y.%m.%d-%H:%M:%S")
+  chat_entry = {
+    'timestamp': formated_time,
+    'question': question,
+    'answer': answer,
+    'point': point
+  }
+  try:
+    response = requests.post(RECEIVING_APP_URL, json=chat_entry)
+    response.raise_for_status()
+    return "Chat log sent successfully"
+  except requests.exceptions.RequestException as e:
+    return f"Failed to send chat log: {e}"
 
 
 def get_session_id():
@@ -23,6 +83,7 @@ def get_first_pdf_file():
     if filename.endswith('.pdf'):
       return filename
   return None
+
 
 def get_pdf_page_num():
   pdf_file = get_first_pdf_file()
@@ -44,30 +105,37 @@ def delete_all_vectorstore():
     shutil.rmtree(vectorstore_path)
   return
 
-custom_responses = {
-  "hello": [
-    "Wazzup! ",
-    "Hi there! Sunshine or rainbows today? ☀️",
-    "Hey! Did you know penguins can fly... short distances?  (Don't tell them I told you!)",
-    "Greetings, earthling! Ready to chat with your friendly AI assistant?  ",
-    "Hi hi! What can I do to make your day extra sparkly? ✨",
-    "Hey there, good lookin'!   Just kidding... unless?  ",
-    "Yo!   Let's have some fun and maybe learn something new together!  ",
-    "Hiya! What's on your mind today? ",
-    "Greetings, fellow human!    Ready to conquer the world (or at least this conversation)?  ",
-    "Top of the mornin' to ya! (or afternoon, or evening, depending on when you read this!)  ☕️"
+
+def get_random_response(key):
+  feedback_list = CUSTOM_RESPONSE.get(key, [])
+  return random.choice(feedback_list)
+
+
+CUSTOM_RESPONSE = {
+  "feedback": [
+    "Terima kasih atas feedbacknya! Kamu memang keren!",
+    "Wow, makasih banyak! Kamu bikin hari kami lebih ceria!",
+    "Makasih, ya! Kamu bikin tim kami tersenyum hari ini!",
+    "Terima kasih! Feedbackmu bagaikan sinar matahari di hari mendung.",
+    "Sangat berterima kasih atas saranmu! Kamu adalah pahlawan kami!",
+    "Makasih banyak! Kami siap untuk lebih baik lagi berkat kamu.",
+    "Terima kasih! Dengan feedbackmu, kami jadi lebih cerdas!",
+    "Kamu hebat! Terima kasih atas feedbacknya yang sangat berharga.",
+    "Terima kasih banyak! Kamu baru saja menyebarkan kebahagiaan.",
+    "Makasih, ya! Kamu baru saja membuat kami semakin semangat.",
+    "Btw, tiap jawaban bisa kamu spam feedback beberapa kali loh. Tapi tolong, sekali saja sudah lebih dari cukup."
   ],
-  "how r u": [
-    "I'm doing great, thanks for asking! How about you?",
-    "Fantastic! Ready to chat and have some fun! ",
-    "Feeling like a dancing robot today. Wanna join? ",
-    "I'm doing swell!  Always happy to chat and help in any way I can. ",
-    "I'm feeling as energetic as a puppy with a new squeaky toy!    How about you?",
-    "I'm doing chipper!  Like a freshly brewed cup of your favorite beverage. ☕️",
-    "I'm chugging along, one line of code at a time.    How's your day going?",
-    "I'm feeling optimistic!  Like there are endless possibilities for fun and learning.  ",
-    "I'm doing A-Okay!  Ready to answer your questions or just chat about anything that comes to mind.  ❓",
-    "I'm feeling like a superhero with the power to make people smile!  ‍♀️  (Except for maybe supervillains... ‍♀️)"
+  "feedback_first": [
+    "Oops! Sepertinya saya lupa pertanyaan terakhir kamu. Yuk, tanya lagi sebelum kasih feedback.",
+    "Eh, maaf! Pertanyaan terakhirmu belum saya ingat. Silakan tanya dulu, baru deh kasih feedback.",
+    "Waduh, pertanyaan terakhirmu kabur dari ingatan saya. Tanyakan dulu, biar bisa kasih feedback dengan tepat.",
+    "Aduh, saya lupa pertanyaan terakhirnya. Ayo tanya dulu, baru kasih feedback supaya lebih oke!",
+    "Ups, pertanyaan terakhirmu ngumpet! Silakan tanya lagi sebelum kita lanjut ke feedback.",
+    "Eh, sepertinya pertanyaan terakhirmu baru saya ingat. Tanyakan dulu, biar feedbacknya lebih mantap!",
+    "Maaf, saya belum ingat pertanyaan terakhir. Tanyakan lagi yuk, supaya feedbacknya makin pas!",
+    "Duh, pertanyaan terakhirmu sepertinya hilang ingatan. Silakan ajukan lagi sebelum feedback diberikan.",
+    "Ternyata, pertanyaan terakhir kamu sempat terlupa. Tanyakan lagi dulu sebelum kasih feedback, ya!",
+    "Hmm, pertanyaan terakhirmu sepertinya nyasar. Tanyakan lagi, biar feedbacknya lebih sesuai!"
   ],
   "what's up": [
     "The sky!  But seriously, how can I brighten your day?",

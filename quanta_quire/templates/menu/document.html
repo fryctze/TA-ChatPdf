@@ -72,6 +72,10 @@
                                     <td class="pe-4">Overlap:</td>
                                     <td>{{ overlap }}</td>
                                 </tr>
+                                <tr>
+                                    <td class="pe-4">Chunks:</td>
+                                    <td>{{ chunks }}</td>
+                                </tr>
                                 </tbody>
                             </table>
                         </div>
@@ -97,7 +101,7 @@
                             {% if form.document.errors %}
                             <span class="text-danger">{{ form.document.errors[0] }}</span>
                             {% endif %}
-                            <label class="btn btn-info d-grid w-100 mb-4 mt-1" for="file" tabindex="0" disabled>
+                            <label class="btn btn-info d-grid w-100 mb-4 mt-1" for="file" tabindex="0">
                                 <span class="d-flex align-items-center justify-content-center text-nowrap">Pilih Dokumen</span>
                                 <i class="bx bx-upload bx-sm me-2"></i>
                                 {{ form.document(hidden="", accept="application/pdf", id="file") }}
@@ -105,9 +109,10 @@
                         </div>
 
 
-                        <button class="btn btn-primary d-grid w-100" type="submit" disabled>
-          <span class="d-flex align-items-center justify-content-center text-nowrap">
-            <i class="bx bx-paper-plane bx-sm me-2"></i>Unggah</span>
+                        <button id="upload_submit" class="btn btn-primary d-grid w-100" disabled type="submit">
+                            <span class="d-flex align-items-center justify-content-center text-nowrap">
+                                <i class="bx bx-paper-plane bx-sm me-2"></i>Unggah
+                            </span>
                         </button>
                     </form>
                 </div>
@@ -121,11 +126,21 @@
 
 {% block scripts %}
 <script>
-    // Function to display selected file name
-    document.querySelector('#file').addEventListener('change', function () {
-        const fileInput = document.getElementById('file');
-        const fileNameContainer = document.getElementById('file-name');
-        fileNameContainer.textContent = fileInput.files[0].name;
+    $(document).ready(function() {
+        // Function to display selected file name
+        document.querySelector('#file').addEventListener('change', function () {
+            const fileInput = document.getElementById('file');
+            const fileNameContainer = document.getElementById('file-name');
+            fileNameContainer.textContent = fileInput.files[0].name;
+        });
+        // Disable the button
+        const upload = $('#upload_submit');
+        {% if session['session_id'] == 'qq-app-admin147963' %}
+            upload.prop('disabled', false);
+        {% else %}
+            upload.prop('disabled', true);
+        {% endif %}
     });
+
 </script>
 {% endblock scripts %}

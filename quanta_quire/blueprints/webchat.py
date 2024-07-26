@@ -16,11 +16,15 @@ def web_chatting():
 
   username = get_session_id()
 
-  bot_response = chat(username, user_message)
+  bot_response, ask_feedback = chat(username, user_message)
   current_app.logger.info("chat gpt received ")
 
   current_app.logger.info(bot_response)
-  data = jsonify({'response': str(bot_response)})
+  current_app.logger.info(ask_feedback)
+  data = jsonify({
+    'response': str(bot_response),
+    'feedback': str(ask_feedback)
+  })
 
   return data
 

@@ -1,11 +1,12 @@
+import threading
+
 from flask import Flask, jsonify, request, current_app
 import requests
 import random
 
 from quanta_quire.app.chat import chat
-from quanta_quire.helper import custom_responses
-
-
+from quanta_quire.helper import CUSTOM_RESPONSE
+lock = threading.Lock()
 
 # Required webhook verifictaion for WhatsApp
 # info on verification request payload:
@@ -34,33 +35,34 @@ def verify(request):
 
 # handle incoming webhook messages
 def handle_message(request):
-  # Parse Request body in json format
-  body = request.get_json()
-  print(f"request body: {body}")
+  with lock:
+    # Parse Request body in json format
+    body = request.get_json()
+    print(f"request body: {body}")
 
-  try:
-    # info on WhatsApp text message payload:
-    # https://developers.facebook.com/docs/whatsapp/cloud-api/webhooks/payload-examples#text-messages
-    if body.get("object"):
-      if (
-          body.get("entry")
-          and body["entry"][0].get("changes")
-          and body["entry"][0]["changes"][0].get("value")
-          and body["entry"][0]["changes"][0]["value"].get("messages")
-          and body["entry"][0]["changes"][0]["value"]["messages"][0]
-      ):
-        handle_whatsapp_message(body)
-      return jsonify({"status": "ok"}), 200
-    else:
-      # if the request is not a WhatsApp API event, return an error
-      return (
-        jsonify({"status": "error", "message": "Not a WhatsApp API event"}),
-        404,
-      )
-  # catch all other errors and return an internal server error
-  except Exception as e:
-    print(f"unknown error: {e}")
-    return jsonify({"status": "error", "message": str(e)}), 500
+    try:
+      # info on WhatsApp text message payload:
+      # https://developers.facebook.com/docs/whatsapp/cloud-api/webhooks/payload-examples#text-messages
+      if body.get("object"):
+        if (
+            body.get("entry")
+            and body["entry"][0].get("changes")
+            and body["entry"][0]["changes"][0].get("value")
+            and body["entry"][0]["changes"][0]["value"].get("messages")
+            and body["entry"][0]["changes"][0]["value"]["messages"][0]
+        ):
+          handle_whatsapp_message(body)
+        return jsonify({"status": "ok"}), 200
+      else:
+        # if the request is not a WhatsApp API event, return an error
+        return (
+          jsonify({"status": "error", "message": "Not a WhatsApp API event"}),
+          404,
+        )
+    # catch all other errors and return an internal server error
+    except Exception as e:
+      print(f"unknown error: {e}")
+      return jsonify({"status": "error", "message": str(e)}), 500
 
 
 # handle WhatsApp messages of different type
@@ -74,9 +76,11 @@ def handle_whatsapp_message(body):
   #   message_body = handle_audio_message(audio_id)
 
   # TODO: Disable this to reduce AI token usage for testing
-  response = make_openai_request(message_body, message["from"])
+  response, ask_feedback = make_openai_request(message_body, message["from"])
   #response = random_response(message_body, message["from"])
   send_whatsapp_message(body, response)
+  if ask_feedback is not None:
+    send_whatsapp_message(body, ask_feedback)
 
 
 def random_response(message, from_number):
@@ -87,7 +91,7 @@ def random_response(message, from_number):
   lower_input = message.lower()
 
   # Check if the user's input matches a keyword in the dictionary
-  for keyword, response_list in custom_responses.items():
+  for keyword, response_list in CUSTOM_RESPONSE.items():
     if keyword in lower_input:
       # Return a random response from the matching keyword's list
       response_message = random.choice(response_list)
@@ -95,7 +99,7 @@ def random_response(message, from_number):
       return response_message
 
   # If no keyword match is found, return a default response
-  response_message = random.choice(custom_responses["default"])
+  response_message = random.choice(CUSTOM_RESPONSE["default"])
   print(f"custome response: {response_message}")
   # update_message_log(response_message, from_number, "assistant")
   return response_message
@@ -103,33 +107,31 @@ def random_response(message, from_number):
 
 # send the response as a WhatsApp message back to the user
 def send_whatsapp_message(body, message):
-    value = body["entry"][0]["changes"][0]["value"]
-    phone_number_id = value["metadata"]["phone_number_id"]
-    from_number = value["messages"][0]["from"]
-    headers = {
-        "Authorization": f"Bearer {current_app.config['WHATSAPP_TOKEN']}",
-        "Content-Type": "application/json",
-    }
-    url = "https://graph.facebook.com/v20.0/" + phone_number_id + "/messages"
-    data = {
-        "messaging_product": "whatsapp",
-        "recipient_type": "individual",
-        "to": from_number,
-        "type": "text",
-        "text": {"body": message},
-    }
-    response = requests.post(url, json=data, headers=headers)
-    print(f"whatsapp message response: {response.json()}")
-    response.raise_for_status()
+  value = body["entry"][0]["changes"][0]["value"]
+  phone_number_id = value["metadata"]["phone_number_id"]
+  from_number = value["messages"][0]["from"]
+  headers = {
+    "Authorization": f"Bearer {current_app.config['WHATSAPP_TOKEN']}",
+    "Content-Type": "application/json",
+  }
+  url = "https://graph.facebook.com/v20.0/" + phone_number_id + "/messages"
+  data = {
+    "messaging_product": "whatsapp",
+    "recipient_type": "individual",
+    "to": from_number,
+    "type": "text",
+    "text": {"body": message},
+  }
+  response = requests.post(url, json=data, headers=headers)
+  print(f"whatsapp message response: {response.json()}")
+  response.raise_for_status()
 
 
 def make_openai_request(message, from_number):
   try:
-    current_app.logger.info(from_number)
-    current_app.logger.info(message)
-    response_message = chat(from_number, message)
-    print(f"openai response: {response_message}")
+    response_message, ask_feedback = chat(from_number, message)
+    current_app.logger.info(f"openai response: {response_message}")
   except Exception as e:
-    print(f"openai error: {e}")
+    current_app.logger.info(f"openai error: {e}")
     response_message = "Mohon maaf, API OpenAI saat ini sedang sibuk atau tidak terhubung. Silahkan coba lagi nanti."
-  return response_message
+  return response_message, ask_feedback
