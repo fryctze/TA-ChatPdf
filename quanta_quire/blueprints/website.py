@@ -1,9 +1,8 @@
 import os
 
-from pypdf import PdfReader
 from flask import Blueprint, render_template, current_app, flash, session, redirect, url_for, send_from_directory
 
-from quanta_quire.app.vectorstore import splitter, generate_vectorstore, create_chroma
+from quanta_quire.app.vectorstore import splitter, generate_vectorstore
 from quanta_quire.helper import delete_all_pdfs, get_first_pdf_file, get_pdf_page_num, get_session_id
 from quanta_quire.forms import UploadForm
 
@@ -35,8 +34,8 @@ def document():
 
     chunks = splitter(size, overlap)
     current_app.chunks = len(chunks)
-    # generate_vectorstore(chunks)
-    create_chroma(chunks)
+    generate_vectorstore(chunks)
+    # create_chroma(chunks)
 
     return redirect(url_for('website.document'))
 
