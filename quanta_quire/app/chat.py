@@ -8,11 +8,11 @@ from quanta_quire.helper import get_random_response, append_chat_log, insert_cha
 
 
 def chat(session_id, message):
-  ask_feedback = ("Apakah jawaban saya sudah tepat? Lewati, dengan langsung bertanya lagi atau pilih: "
-                  "[0] Tidak sesuai;"
-                  "[1] Kurang sesuai; "
-                  "[2] Sesuai; "
-                  "[3] Sangat sesuai!")
+  ask_feedback = ("Apakah jawaban saya sudah tepat? Lewati, dengan langsung bertanya lagi atau pilih: \n"
+                  "[0] *Tidak* sesuai; \n"
+                  "[1] *Kurang* sesuai; \n"
+                  "[2] *Sesuai*; \n"
+                  "[3] *Sangat* sesuai!")
 
   try:
     number = float(message)  # Feedback received
