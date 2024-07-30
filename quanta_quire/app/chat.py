@@ -1,10 +1,12 @@
 import os
+
 from flask import current_app
+
 from quanta_quire.app.chat_basic import basic_chat
 from quanta_quire.app.chat_rag import rag_chat
 from quanta_quire.app.message_utils import get_last_ai_message, get_last_human_message
 from quanta_quire.app.vectorstore import faiss_load_vectorstore
-from quanta_quire.helper import get_random_response, append_chat_log, insert_chat_log
+from quanta_quire.helper import get_random_response, insert_chat_log
 
 
 def chat(session_id, message):
@@ -19,15 +21,15 @@ def chat(session_id, message):
     if 0 <= number <= 3:  # Save the feedback
       if session_id not in current_app.chats:
         return get_random_response("feedback_first"), None
-      save_chat_log(session_id, message)
+      save_chat_feedback(session_id=session_id, point=message)
       return get_random_response("feedback"), None
   except ValueError:
     pass  # The message is not a number, so it might be a new question
 
   # Check if the session has previous chats
-  if session_id not in current_app.chats:
-    response = qna(session_id, message)
-    return response, ask_feedback
+  # if session_id not in current_app.chats:
+  #   response = qna(session_id, message)
+  #   return response, ask_feedback
 
   # Save the new question and mark that feedback is needed
   response = qna(session_id, message)
@@ -35,11 +37,27 @@ def chat(session_id, message):
   return response, ask_feedback
 
 
-def save_chat_log(session_id, message=-1):
+def save_chat_log(session_id, message):
+  ai = get_last_ai_message(current_app.chats, session_id)
+  # question = get_last_human_message(current_app.chats, session_id)
+  # append_chat_log(session_id, question.content, ai.content, message)
+  #current_app.logger.info(f"Inserting Chat WITHOUT Feedback....\n{message}\n{ai.content}")
+  insert_chat_log(
+    user=session_id,
+    question=message,
+    answer=ai.content)
+
+
+def save_chat_feedback(session_id, point):
   ai = get_last_ai_message(current_app.chats, session_id)
   question = get_last_human_message(current_app.chats, session_id)
-  #append_chat_log(session_id, question.content, ai.content, message)
-  insert_chat_log(session_id, question.content, ai.content, message)
+  # append_chat_log(session_id, question.content, ai.content, message)
+  # current_app.logger.info(f"Inserting Chat Feedback....\n{question.content}\n{point}")
+  insert_chat_log(
+    user=session_id,
+    point=point,
+    feedback=True
+  )
 
 
 def qna(session_id, message):
@@ -49,7 +67,7 @@ def qna(session_id, message):
     index_pkl_path = os.path.join(vectorstore_path, 'index.pkl')
 
     # if pdf_files:
-    #if os.path.isfile(index_faiss_path) and os.path.isfile(index_pkl_path):
+    # if os.path.isfile(index_faiss_path) and os.path.isfile(index_pkl_path):
     if os.path.exists(vectorstore_path) and os.path.isdir(vectorstore_path):
       retriever = faiss_load_vectorstore().as_retriever()
       return rag_chat(retriever, session_id, message)

@@ -4,7 +4,7 @@ from langchain_core.chat_history import BaseChatMessageHistory, InMemoryChatMess
 from langchain_community.chat_message_histories import ChatMessageHistory
 
 llm = ChatOpenAI(
-  #model="gpt-3.5-turbo"
+  # model="gpt-3.5-turbo"
   model="gpt-4o"
 )
 

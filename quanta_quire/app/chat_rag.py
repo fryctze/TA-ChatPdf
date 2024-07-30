@@ -29,7 +29,7 @@ def history_aware_retriever(retriever):
 def rag_chain(retriever):
   # System prompt for answer
   system_prompt = (
-    "Your name is Quanta Quire. You are a bot created specifically for the Ma Chung University Research experiments."
+    "Your name is Quanta Quire. You are a bot created specifically for the Universitas Ma Chung research experiments."
     "You are acting as a customer support that can help with whatever user "
     "need about information related"
     # "You are an assistant for question-answering tasks. "

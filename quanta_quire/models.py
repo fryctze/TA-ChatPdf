@@ -8,4 +8,4 @@ class ChatLog(db.Model):
   user = db.Column(db.String)
   question = db.Column(db.Text)
   answer = db.Column(db.Text)
-  point = db.Column(db.Integer)
+  point = db.Column(db.Integer, default=None)
