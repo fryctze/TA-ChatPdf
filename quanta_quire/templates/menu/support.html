@@ -1,0 +1,66 @@
+{% extends 'layout.html' %}
+{% block title %}Kredit{% endblock %}
+{% block nav_title %}Kredit{% endblock nav_title %}
+{% block breadcrumb %}
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb mb-0">
+        <li class="breadcrumb-item"><a href="#">Aplikasi</a></li>
+        <li aria-current="page" class="breadcrumb-item active">Kredit</li>
+    </ol>
+</nav>
+{% endblock breadcrumb %}
+
+{% block content %}
+<div class="container-xxl flex-grow-1 container-p-y">
+    <div class="card">
+        <h5 class="card-header">Hoverable rows</h5>
+        <div class="table-responsive text-nowrap">
+            <table class="table table-hover">
+                <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Type</th>
+                </tr>
+                </thead>
+                <tbody class="table-border-bottom-0">
+                <tr>
+                    <td><a href="https://platform.openai.com">GPT-4o</a> used as LLM</td>
+                    <td><span class="badge bg-label-success me-1">Model</span></td>
+                </tr>
+                <tr>
+                    <td>Web service built with Flask framework</td>
+                    <td><span class="badge bg-label-warning me-1">Stack</span></td>
+                </tr>
+                <tr>
+                    <td>App deployed on <a href="render.com">Render</a></td>
+                    <td><span class="badge bg-label-primary me-1">Service</span></td>
+                </tr>
+                <tr>
+                    <td><a href="https://developers.facebook.com">WhatsApp</a>-powered messaging platform</td>
+                    <td><span class="badge bg-label-primary me-1">Service</span></td>
+                </tr>
+                <tr>
+                    <td>Managed PostgreSQL database hosted on <a href="render.com">Render</a></td>
+                    <td><span class="badge bg-label-primary me-1">Service</span></td>
+                </tr>
+                <tr>
+                    <td>UI Template made with ❤️ by<a class="footer-link fw-bolder" href="https://themeselection.com"
+                                                      target="_blank">ThemeSelection</a></td>
+                    <td><span class="badge bg-label-info me-1">UI</span></td>
+                </tr>
+                <tr>
+                    <td><a href="https://www.flaticon.com/free-icons/halloween-party" title="halloween party icons">Halloween
+                        party icons created by PixelVerse - Flaticon</a></td>
+                    <td><span class="badge bg-label-secondary me-1">Icon</span></td>
+                </tr>
+                <tr>
+                    <td><a href="https://www.flaticon.com/free-icons/pdf" title="pdf icons">Pdf icons created by
+                        IconBaandar - Flaticon</a></td>
+                    <td><span class="badge bg-label-secondary me-1">Icon</span></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock content %}

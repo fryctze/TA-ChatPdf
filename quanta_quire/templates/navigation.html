@@ -28,7 +28,7 @@
       </li>
 
       <li class="menu-header small text-uppercase">
-        <span class="menu-header-text">Pengaturan</span>
+        <span class="menu-header-text">Ekstra</span>
       </li>
       <li class="menu-item {% if page_name == 'document' %}active{% endif %}">
         <a href="{{ url_for('website.document') }}" class="menu-link">
@@ -36,17 +36,17 @@
           <div data-i18n="Documentation">Dokumen</div>
         </a>
       </li>
-      <!--<li class="menu-item">
-        <a href="#" class="menu-link">
-          <i class="menu-icon tf-icons bx bx-lock-open-alt"></i>
-          <div data-i18n="Authentications">Token</div>
+      <li class="menu-item {% if page_name == 'data' %}active{% endif %}">
+        <a href="{{ url_for('website.data') }}" class="menu-link">
+          <i class="menu-icon tf-icons bx bx-cube-alt"></i>
+          <div data-i18n="Data">Data</div>
         </a>
       </li>
-      <li class="menu-item">
-        <a href="#" class="menu-link">
-          <i class="menu-icon tf-icons bx bx-cube-alt"></i>
-          <div data-i18n="Misc">Data</div>
+      <li class="menu-item {% if page_name == 'support' %}active{% endif %}">
+        <a href="{{ url_for('website.support') }}" class="menu-link">
+          <i class="menu-icon tf-icons bx bx-book-heart"></i>
+          <div data-i18n="Support">Kredit</div>
         </a>
-      </li>-->
+      </li>
     </ul>
   </aside>

@@ -73,6 +73,6 @@ def data():
 
 
 
-@blueprint.route('/token')
-def change_token():
-  return render_template("menu/token.html", page_name='token')
+@blueprint.route('/support')
+def support():
+  return render_template("menu/support.html", page_name='support')
