@@ -1,10 +1,45 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% extends 'layout.html' %}
+{% block title %}Data{% endblock %}
+{% block nav_title %}Data{% endblock nav_title %}
+{% block breadcrumb %}
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb mb-0">
+        <li class="breadcrumb-item"><a href="#">Aplikasi</a></li>
+        <li aria-current="page" class="breadcrumb-item active">Database</li>
+    </ol>
+</nav>
+{% endblock breadcrumb %}
 
-</body>
-</html>
+{% block content %}
+<div class="container-xxl flex-grow-1 container-p-y">
+    <div class="row">
+        <div class="col-12">
+            <h1>Database</h1>
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Timestamp</th>
+                    <th>User</th>
+                    <th>Question</th>
+                    <th>Answer</th>
+                    <th>Category</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for row in data %}
+                <tr>
+                    <td>{{ row.id }}</td>
+                    <td>{{ row.timestamp }}</td>
+                    <td>{{ row.user }}</td>
+                    <td>{{ row.question }}</td>
+                    <td>{{ row.answer }}</td>
+                    <td>{{ row.point }}</td>
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock content %}

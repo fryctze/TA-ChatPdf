@@ -14,20 +14,24 @@ def chat(session_id, message):
                   "[2] *Sesuai*; \n"
                   "[3] *Sangat* sesuai!")
 
-  try:
-    number = float(message)  # Feedback received
-    if 0 <= number <= 3:  # custom response if never asked, yet giving out feedback
+  try:  # Check if the message is a feedback number
+    number = int(message)
+    if 0 <= number <= 3:  # Save the feedback
       if session_id not in current_app.chats:
         return get_random_response("feedback_first"), None
-    save_chat_log(session_id, message)
-    return get_random_response("feedback"), None  # feedback received & saved
-  except ValueError:  # ask again & without giving out feedback
-    pass
+      save_chat_log(session_id, message)
+      return get_random_response("feedback"), None
+  except ValueError:
+    pass  # The message is not a number, so it might be a new question
+
+  # Check if the session has previous chats
   if session_id not in current_app.chats:
     response = qna(session_id, message)
     return response, ask_feedback
+
+  # Save the new question and mark that feedback is needed
   response = qna(session_id, message)
-  save_chat_log(session_id)
+  save_chat_log(session_id, message)
   return response, ask_feedback
 
 

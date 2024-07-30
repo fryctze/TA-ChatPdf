@@ -1,14 +1,13 @@
 import json
 import os
+import random
 import shutil
+import string
 import threading
 from datetime import datetime
 
-from flask import current_app, session
-import string
-import random
 import requests
-
+from flask import current_app, session
 from pypdf import PdfReader
 
 from .extensions import db
@@ -20,18 +19,22 @@ RECEIVING_APP_URL = "https://quanta-quire.glitch.me"
 
 
 def insert_chat_log(user, question, answer, point):
-  now = datetime.now()
+  # now = datetime.now()
   # formated_time = now.strftime("%Y.%m.%d-%H:%M:%S")
-  formated_time = now.isoformat()
-  chat_log = ChatLog(
-    # timestamp=formated_time,
-    user=user,
-    question=question,
-    answer=answer,
-    point=point
-  )
-  db.session.add(chat_log)
-  db.session.commit()
+
+  log_entry = ChatLog.query.filter_by(user=user).order_by(ChatLog.timestamp.desc()).first()
+  if log_entry and log_entry.point is -1:  # Update the last entry if feedback is provided
+    log_entry.point = point
+    db.session.commit()
+  else:
+    new_log_entry = ChatLog(
+      user=user,
+      question=question,
+      answer=answer,
+      point=point
+    )
+    db.session.add(new_log_entry)
+    db.session.commit()
 
 
 def append_chat_log(user, question, answer, point=0):

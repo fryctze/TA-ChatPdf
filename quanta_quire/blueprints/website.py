@@ -5,6 +5,7 @@ from flask import Blueprint, render_template, current_app, flash, session, redir
 from quanta_quire.app.vectorstore import splitter, generate_vectorstore
 from quanta_quire.helper import delete_all_pdfs, get_first_pdf_file, get_pdf_page_num, get_session_id
 from quanta_quire.forms import UploadForm
+from quanta_quire.models import ChatLog
 
 blueprint = Blueprint("website", __name__)
 
@@ -66,7 +67,10 @@ def document_download(filename):
 
 @blueprint.route('/data')
 def data():
-  return render_template("menu/data.html", page_name='data')
+  logs = ChatLog.query.all()
+  return render_template("menu/data.html", page_name='data', data=logs)
+
+
 
 
 @blueprint.route('/token')
