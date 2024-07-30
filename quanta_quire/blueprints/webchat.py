@@ -25,6 +25,7 @@ def web_chatting():
     'response': str(bot_response),
     'feedback': str(ask_feedback)
   })
+  current_app.logger.info(data)
 
   return data
 

@@ -12,8 +12,7 @@ def history_aware_retriever(retriever):
     "which might reference context in the chat history, "
     "formulate a standalone question which can be understood "
     "without the chat history. Do NOT answer the question, "
-    "just reformulate it if needed"
-    # "just reformulate it if needed and otherwise return it as is."
+    "just reformulate it if needed and otherwise return it as is."
   )
   contextualize_q_prompt = ChatPromptTemplate.from_messages(
     [
@@ -30,12 +29,13 @@ def history_aware_retriever(retriever):
 def rag_chain(retriever):
   # System prompt for answer
   system_prompt = (
-    "You are a customer support that can help with whatever user "
-    "need about information related, especially to the retrieved context. "
+    "Your name is Quanta Quire. You are a bot created specifically for the Ma Chung University Research experiments."
+    "You are acting as a customer support that can help with whatever user "
+    "need about information related"
     # "You are an assistant for question-answering tasks. "
-    # "Use the following pieces of retrieved context to answer the question."
-    # "If you don't know the answer, see the previous conversation to find the answer."
-    # "Then, if you still don't know the answer, say that you don't know. "
+    "Use the following pieces of retrieved context to answer the question."
+    "If you don't know the answer, see the previous conversation to find the answer."
+    "Then, if you still don't know the answer, say that you don't know. "
     # "If you don't know the answer, say that you don't know. "
     "Use three sentences maximum and keep the answer concise."
     "response with Bahasa Indonesia. response as other language if i told you to do so."

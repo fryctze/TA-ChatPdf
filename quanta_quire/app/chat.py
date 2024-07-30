@@ -4,27 +4,38 @@ from quanta_quire.app.chat_basic import basic_chat
 from quanta_quire.app.chat_rag import rag_chat
 from quanta_quire.app.message_utils import get_last_ai_message, get_last_human_message
 from quanta_quire.app.vectorstore import faiss_load_vectorstore
-from quanta_quire.helper import get_random_response, append_chat_log
+from quanta_quire.helper import get_random_response, append_chat_log, insert_chat_log
 
 
 def chat(session_id, message):
-  ask_feedback = "Apakah jawaban saya sudah tepat? Lewati, dengan langsung bertanya lagi atau pilih: [1] Sudah tepat; [2] Masih ada yang kurang; [3] Tidak tepat!"
+  ask_feedback = ("Apakah jawaban saya sudah tepat? Lewati, dengan langsung bertanya lagi atau pilih: "
+                  "[0] Tidak sesuai;"
+                  "[1] Kurang sesuai; "
+                  "[2] Sesuai; "
+                  "[3] Sangat sesuai!")
+
   try:
-    number = float(message)  # Convert to float to handle both integer and decimal numbers
-    if 1 <= number <= 3:
+    number = float(message)  # Feedback received
+    if 0 <= number <= 3:  # custom response if never asked, yet giving out feedback
       if session_id not in current_app.chats:
         return get_random_response("feedback_first"), None
-      return feedback(session_id, message), None
-  except ValueError:
+    save_chat_log(session_id, message)
+    return get_random_response("feedback"), None  # feedback received & saved
+  except ValueError:  # ask again & without giving out feedback
     pass
-  return qna(session_id, message), ask_feedback
+  if session_id not in current_app.chats:
+    response = qna(session_id, message)
+    return response, ask_feedback
+  response = qna(session_id, message)
+  save_chat_log(session_id)
+  return response, ask_feedback
 
 
-def feedback(session_id, message):
+def save_chat_log(session_id, message=-1):
   ai = get_last_ai_message(current_app.chats, session_id)
   question = get_last_human_message(current_app.chats, session_id)
-  append_chat_log(question.content, ai.content, message)
-  return get_random_response("feedback")
+  #append_chat_log(session_id, question.content, ai.content, message)
+  insert_chat_log(session_id, question.content, ai.content, message)
 
 
 def qna(session_id, message):

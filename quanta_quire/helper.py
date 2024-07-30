@@ -11,12 +11,30 @@ import requests
 
 from pypdf import PdfReader
 
+from .extensions import db
+from .models import ChatLog
+
 lock = threading.Lock()
 FEEDBACK_FILE = 'feedbacks.json'
 RECEIVING_APP_URL = "https://quanta-quire.glitch.me"
 
 
-def append_chat_log(question, answer, point):
+def insert_chat_log(user, question, answer, point):
+  now = datetime.now()
+  # formated_time = now.strftime("%Y.%m.%d-%H:%M:%S")
+  formated_time = now.isoformat()
+  chat_log = ChatLog(
+    # timestamp=formated_time,
+    user=user,
+    question=question,
+    answer=answer,
+    point=point
+  )
+  db.session.add(chat_log)
+  db.session.commit()
+
+
+def append_chat_log(user, question, answer, point=0):
   with lock:
     now = datetime.now()
     formated_time = now.strftime("%Y.%m.%d-%H:%M:%S")
@@ -29,6 +47,7 @@ def append_chat_log(question, answer, point):
       chat_log = json.load(file)
       chat_entry = {
         'timestamp': formated_time,
+        'user': user,
         'question': question,
         'answer': answer,
         'point': point
@@ -123,7 +142,7 @@ CUSTOM_RESPONSE = {
     "Kamu hebat! Terima kasih atas feedbacknya yang sangat berharga.",
     "Terima kasih banyak! Kamu baru saja menyebarkan kebahagiaan.",
     "Makasih, ya! Kamu baru saja membuat kami semakin semangat.",
-    "Btw, tiap jawaban bisa kamu spam feedback beberapa kali loh. Tapi tolong, sekali saja sudah lebih dari cukup."
+    "Btw, setiap jawaban bisa kamu spam feedback beberapa kali loh. Tapi kami yakin kok, kamu bukan manusia yang seperti itu ^_^."
   ],
   "feedback_first": [
     "Oops! Sepertinya saya lupa pertanyaan terakhir kamu. Yuk, tanya lagi sebelum kasih feedback.",

@@ -8,3 +8,5 @@ if os.path.exists(dotenv_path):
 from quanta_quire import start_app
 
 app = start_app()
+if __name__ == "__main__":
+    app.run()

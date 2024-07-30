@@ -86,7 +86,8 @@
 {% block scripts %}
 <script>
     $(document).ready(function () {
-        const chat_box = $('#chat-box ul');
+        const chat_box = $('#chat-box');
+        const chat_box_ul = $('#chat-box ul');
         const input = $('#message');
         const session_id = $('#session_id');
         $('#chat-form').on('submit', function (e) {
@@ -97,13 +98,13 @@
                 return;
             }
 
-            chat_box.append('<li class="clearfix mb-3 user-message"><div class="d-flex overflow-hidden"><div class="chat-message-wrapper flex-grow-1"><div class="message my-message float-right bg-primary text-white py-2 px-3 text-end"><p class="mb-0 text-break">' + userMessage + '</p></div></div></div></li>');
+            chat_box_ul.append('<li class="clearfix mb-3 user-message"><div class="d-flex overflow-hidden"><div class="chat-message-wrapper flex-grow-1"><div class="message my-message float-right bg-primary text-white py-2 px-3 text-end"><p class="mb-0 text-break">' + userMessage + '</p></div></div></div></li>');
             input.val('');
-            chat_box.scrollTop(chat_box[0].scrollHeight);
+            //chat_box_ul.scrollTo(chat_box_ul[0].scrollHeight);
 
-            /*chat_box.append('<li class="clearfix mb-3 bot-message"><div class="d-flex overflow-hidden"><div class="user-avatar flex-shrink-0 me-4"><div class="avatar avatar-md"><img alt="Avatar" class="rounded-circle" src="https://cdn.glitch.global/5bad605e-7b7c-4a65-b6fa-022756b410ff/ai-me-4-0.png?v=1721273881457"></div></div><div class="chat-message-wrapper flex-grow-1"><div class="message other-message py-2 px-3 text-start"><p class="mb-0"> Do you have design files for sneat? Do you have design files for sneat? Do you have design files for sneat? Do you have design files for sneat? Do you have design files for sneat? Do you have design files for sneat? Do you have design files for sneat? Do you have design files for sneat? </p></div></div></div></li>');
+            //chat_box_ul.append('<li class="clearfix mb-3 bot-message"><div class="d-flex overflow-hidden"><div class="user-avatar flex-shrink-0 me-4"><div class="avatar avatar-md"><img alt="Avatar" class="rounded-circle" src="https://cdn.glitch.global/5bad605e-7b7c-4a65-b6fa-022756b410ff/ai-me-4-0.png?v=1721273881457"></div></div><div class="chat-message-wrapper flex-grow-1"><div class="message other-message py-2 px-3 text-start"><p class="mb-0"> Do you have design files for sneat? Do you have design files for sneat? Do you have design files for sneat? Do you have design files for sneat? Do you have design files for sneat? Do you have design files for sneat? Do you have design files for sneat? Do you have design files for sneat? </p></div></div></div></li>');
 
-            $('#chat-box').scrollTop(chat_box[0].scrollHeight);*/
+            chat_box.scrollTop(chat_box_ul[0].scrollHeight);
 
             $.ajax({
                 url: "{{ url_for('webchat.web_chatting') }}",
@@ -112,11 +113,11 @@
                 contentType: "application/json",
                 dataType: 'json',
                 success: function (response) {
-                    $('#chat-box ul').append('<li class="clearfix mb-3 bot-message"><div class="d-flex overflow-hidden"><div class="user-avatar flex-shrink-0 me-4"><div class="avatar avatar-md"><img alt="Avatar" class="rounded-circle" src="https://cdn.glitch.global/49fc0536-4d4a-46e7-9038-594a592d98f4/2.png?v=1721786732363"></div></div><div class="chat-message-wrapper flex-grow-1"><div class="message other-message py-2 px-3 text-start"><p class="mb-0">' + response.response + '</p></div></div></div></li>');
+                    chat_box_ul.append('<li class="clearfix mb-3 bot-message"><div class="d-flex overflow-hidden"><div class="user-avatar flex-shrink-0 me-4"><div class="avatar avatar-md"><img alt="Avatar" class="rounded-circle" src="https://cdn.glitch.global/49fc0536-4d4a-46e7-9038-594a592d98f4/2.png?v=1721786732363"></div></div><div class="chat-message-wrapper flex-grow-1"><div class="message other-message py-2 px-3 text-start"><p class="mb-0">' + response.response + '</p></div></div></div></li>');
                     if (response.feedback !== "None"){
-                        $('#chat-box ul').append('<li class="clearfix mb-3 bot-message"><div class="d-flex overflow-hidden"><div class="user-avatar flex-shrink-0 me-4"><div class="avatar avatar-md"><img alt="Avatar" class="rounded-circle" src="https://cdn.glitch.global/49fc0536-4d4a-46e7-9038-594a592d98f4/2.png?v=1721786732363"></div></div><div class="chat-message-wrapper flex-grow-1"><div class="message other-message py-2 px-3 text-start"><p class="mb-0">' + response.feedback + '</p></div></div></div></li>');
+                        chat_box_ul.append('<li class="clearfix mb-3 bot-message"><div class="d-flex overflow-hidden"><div class="user-avatar flex-shrink-0 me-4"><div class="avatar avatar-md"><img alt="Avatar" class="rounded-circle" src="https://cdn.glitch.global/49fc0536-4d4a-46e7-9038-594a592d98f4/2.png?v=1721786732363"></div></div><div class="chat-message-wrapper flex-grow-1"><div class="message other-message py-2 px-3 text-start"><p class="mb-0">' + response.feedback + '</p></div></div></div></li>');
                     }
-                    chat_box.scrollTop(chat_box[0].scrollHeight);
+                    chat_box.scrollTop(chat_box_ul[0].scrollHeight);
                 },
                 error: function (xhr, status, error) {
                     console.error("Error: " + error);
