@@ -24,7 +24,6 @@ def document():
 
   #if get_first_pdf_file() is not None:
 
-
   form = UploadForm()
   if form.validate_on_submit():
     delete_all_pdfs()
@@ -45,7 +44,6 @@ def document():
   pdf_pages = get_pdf_page_num()
   chunks = 0 if pdf_file is None else len(splitter(size, overlap)) if current_app.chunks == 0 else current_app.chunks
   current_app.chunks = chunks
-
 
   context = {
     'page_name': 'document',
@@ -69,8 +67,6 @@ def document_download(filename):
 def data():
   logs = ChatLog.query.all()
   return render_template("menu/data.html", page_name='data', data=logs)
-
-
 
 
 @blueprint.route('/support')

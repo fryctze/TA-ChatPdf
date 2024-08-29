@@ -2,7 +2,7 @@ import os
 from flask import Flask
 
 from quanta_quire.app.vectorstore import create_faiss, splitter, splitter_from_web
-from quanta_quire.blueprints import website, webchat, webapp, second
+from quanta_quire.blueprints import website, webchat, webapp, dev_ground
 import logging
 
 from .extensions import db
@@ -27,7 +27,7 @@ def register_blueprints(app):
   app.register_blueprint(website.blueprint)
   app.register_blueprint(webchat.blueprint)
   app.register_blueprint(webapp.blueprint)
-  # app.register_blueprint(second.blueprint)
+  app.register_blueprint(dev_ground.blueprint)
 
 
 def register_config(app):
