@@ -1,6 +1,7 @@
-from flask import Blueprint, request, current_app
+from flask import Blueprint, request, current_app, jsonify
 from quanta_quire.app.whatsapp import verify, handle_message
-from quanta_quire.database_util import clean_up_duplicates, recreate_table
+from quanta_quire.database_util import clean_up_duplicates, recreate_table, count_total, count_by_user, \
+  sum_by_user_and_category, exporting_data
 
 blueprint = Blueprint("wa", __name__)
 
@@ -31,3 +32,27 @@ def recreate():
 def test():
   current_app.logger.info(current_app.chats)
   return 'hello'
+
+
+@blueprint.route('/count_by_category')
+def count_by_category():
+  return jsonify(count_total())
+
+
+@blueprint.route('/count_user')
+def count_user():
+  return jsonify(count_by_user())
+
+
+@blueprint.route('/count_user_category')
+def count_user_category():
+  return jsonify(sum_by_user_and_category())
+
+
+
+@blueprint.route('/export_data')
+def export_data():
+  # logs = ChatLog.query.all()
+  # return render_template("menu/data.html", page_name='data', data=logs)
+  data = exporting_data()
+  return jsonify(data)

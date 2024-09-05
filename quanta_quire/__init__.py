@@ -40,6 +40,10 @@ def register_config(app):
   app.config['UPLOAD_PATH'] = os.path.join(os.path.dirname(__file__), os.getenv('UPLOAD_PATH'))
   os.makedirs(app.config['UPLOAD_PATH'], exist_ok=True)
 
+  flask_env = os.getenv('FLASK_ENV', 'development')
+  if flask_env == 'development':
+    app.debug = True
+
 
 def register_vars(app):
   app.chats = {}

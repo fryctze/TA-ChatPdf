@@ -10,6 +10,12 @@ from quanta_quire.helper import get_random_response, insert_chat_log
 
 
 def chat(session_id, message):
+  ask_feedback = 'its a feedback'
+  response = 'its response'
+  return response, ask_feedback
+
+
+def chat_with_feedback(session_id, message):
   ask_feedback = ("Apakah jawaban saya sudah tepat? Lewati, dengan langsung bertanya lagi atau pilih: \n"
                   "[0] *Tidak* sesuai; \n"
                   "[1] *Kurang* sesuai; \n"
@@ -41,7 +47,7 @@ def save_chat_log(session_id, message):
   ai = get_last_ai_message(current_app.chats, session_id)
   # question = get_last_human_message(current_app.chats, session_id)
   # append_chat_log(session_id, question.content, ai.content, message)
-  #current_app.logger.info(f"Inserting Chat WITHOUT Feedback....\n{message}\n{ai.content}")
+  # current_app.logger.info(f"Inserting Chat WITHOUT Feedback....\n{message}\n{ai.content}")
   insert_chat_log(
     user=session_id,
     question=message,

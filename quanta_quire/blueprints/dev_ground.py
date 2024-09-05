@@ -16,7 +16,7 @@ def send_message():
     "Authorization": f"Bearer {current_app.config['WHATSAPP_TOKEN']}",
     "Content-Type": "application/json",
   }
-  url = "https://graph.facebook.com/v20.0/" + "332824269903861" + "/messages"
+  url = "https://graph.facebook.com/v20.0/" + "371105279409151" + "/messages"
   data = {
     "messaging_product": "whatsapp",
     "recipient_type": "individual",
@@ -28,3 +28,6 @@ def send_message():
   return jsonify(f"whatsapp message response: {response.json()}")
 
 
+@blueprint.route('/testing')
+def testing():
+  return jsonify(current_app.config['OPENAI_API_KEY'])
