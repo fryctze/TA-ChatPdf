@@ -76,10 +76,10 @@ def handle_whatsapp_message(body):
     message_body = message["text"]["body"]
 
     response = make_openai_request(message_body, message["from"])
-    send_whatsapp_message(body, response)
 
   else:
     response = "Mohon maaf, tapi saya hanya bisa menerima pertanyaan berupa teks saja."
+
     current_app.logger.warning(f"Message type can only be text: {message}")
 
   send_whatsapp_message(body, response)
