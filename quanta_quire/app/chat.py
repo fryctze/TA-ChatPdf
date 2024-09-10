@@ -10,9 +10,9 @@ from quanta_quire.helper import get_random_response, insert_chat_log
 
 
 def chat(session_id, message):
-  ask_feedback = 'its a feedback'
-  response = 'its response'
-  return response, ask_feedback
+  response = 'Mohon maaf, saya sedang dalam maintenance'
+  current_app.logger.info('Query to OpenAI and receive response from it')
+  return response
 
 
 def chat_with_feedback(session_id, message):
