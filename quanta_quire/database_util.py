@@ -105,3 +105,19 @@ def exporting_data():
   with open('data.json', 'w') as file:
     json.dump(data, file, indent=4, default=str)
   return data
+
+
+def db_query_all():
+  results = db.session.query(ChatLog).all()
+  data = [
+    {
+      'id': log.id,
+      'timestamp': log.timestamp.isoformat() if log.timestamp else None,
+      'user': log.user,
+      'question': log.question,
+      'answer': log.answer,
+      'category': log.point
+    }
+    for log in results
+  ]
+  return data
