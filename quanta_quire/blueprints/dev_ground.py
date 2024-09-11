@@ -1,6 +1,7 @@
 from flask import request, jsonify, Blueprint, render_template, current_app
 import requests
 from quanta_quire.app.whatsapp import send_whatsapp_message
+from quanta_quire.database_util import recreate_table
 from quanta_quire.helper import append_feedback_log
 
 blueprint = Blueprint("devs_field", __name__)
@@ -31,3 +32,8 @@ def send_message():
 @blueprint.route('/testing')
 def testing():
   return jsonify(current_app.config['OPENAI_API_KEY'])
+
+@blueprint.route('/db_reset')
+def db_reset():
+  recreate_table()
+  return jsonify('Database reset')
