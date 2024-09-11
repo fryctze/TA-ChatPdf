@@ -11,7 +11,10 @@ from quanta_quire.helper import get_random_response, insert_chat_log
 
 def chat(session_id, message):
   response = 'Mohon maaf, saya sedang dalam maintenance'
-  current_app.logger.info('Query to OpenAI and receive response from it')
+  current_app.logger.info('Querying to vectorstore...')
+  response = qna(session_id, message)
+  save_chat_log(session_id, message)
+  
   return response
 
 
@@ -54,16 +57,14 @@ def save_chat_log(session_id, message):
     answer=ai.content)
 
 
+# UNUSED FEEDBACK
 def save_chat_feedback(session_id, point):
   ai = get_last_ai_message(current_app.chats, session_id)
   question = get_last_human_message(current_app.chats, session_id)
   # append_chat_log(session_id, question.content, ai.content, message)
   # current_app.logger.info(f"Inserting Chat Feedback....\n{question.content}\n{point}")
-  insert_chat_log(
-    user=session_id,
-    point=point,
-    feedback=True
-  )
+
+  # insert_chat_log(user=session_id,point=point,feedback=True)
 
 
 def qna(session_id, message):
@@ -74,15 +75,20 @@ def qna(session_id, message):
 
     # if pdf_files:
     # if os.path.isfile(index_faiss_path) and os.path.isfile(index_pkl_path):
+
     if os.path.exists(vectorstore_path) and os.path.isdir(vectorstore_path):
+
+      current_app.logger.info("Vectorstore exists, processing to rag chat")
       retriever = faiss_load_vectorstore().as_retriever()
       return rag_chat(retriever, session_id, message)
+
     else:
+
+      current_app.logger.info("There is no vectorstore to be found, processing to BASIC chat")
       return basic_chat(session_id, message)
 
   except Exception as e:
-    print(f"openai error: {e}")
-    current_app.logger.info(e)
+    current_app.logger.warning(f"OPENAI SIBUK Error: {e}")
     response_message = "Mohon maaf, Quanta Quire saat ini sedang sibuk atau tidak terhubung. Silahkan coba lagi nanti."
-    # "Sepertinya Anda menemukan glitch dalam matriks. Silahkan hubungi developer untuk diperbaiki."
     return response_message
+  # "Sepertinya Anda menemukan glitch dalam matriks. Silahkan hubungi developer untuk diperbaiki."

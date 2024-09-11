@@ -42,7 +42,7 @@ def handle_message(request):
   try:
     # info on WhatsApp text message payload:
     # https://developers.facebook.com/docs/whatsapp/cloud-api/webhooks/payload-examples#text-messages
-    current_app.logger.info("Webhook received")
+    #current_app.logger.info("Webhook received")
     if body.get("object"):
       if (
           body.get("entry")
