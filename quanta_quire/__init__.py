@@ -41,8 +41,7 @@ def register_config(app):
   os.makedirs(app.config['UPLOAD_PATH'], exist_ok=True)
 
   flask_env = os.getenv('FLASK_ENV', 'development')
-  if flask_env == 'development':
-    app.debug = True
+  app.debug = flask_env == 'development'
 
 
 def register_vars(app):
