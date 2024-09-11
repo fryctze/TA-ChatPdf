@@ -10,12 +10,17 @@ from quanta_quire.helper import get_random_response, insert_chat_log
 
 
 def chat(session_id, message):
-  response = 'Mohon maaf, saya sedang dalam maintenance'
-  current_app.logger.info('Querying to vectorstore...')
-  response = qna(session_id, message)
-  save_chat_log(session_id, message)
-  
-  return response
+  flask_env = os.getenv('FLASK_ENV', 'real_development')
+
+  if flask_env == 'real_development':
+    current_app.logger.info('Return chat is in development mode....')
+    return 'Mohon maaf, saya sedang dalam maintenance'
+  else:
+    current_app.logger.info('Querying to vectorstore...')
+    response = qna(session_id, message)
+    save_chat_log(session_id, message)
+
+    return response
 
 
 def chat_with_feedback(session_id, message):
