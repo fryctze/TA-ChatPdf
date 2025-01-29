@@ -12,13 +12,14 @@ from quanta_quire.helper import get_random_response, insert_chat_log
 def chat(session_id, message):
   flask_env = os.getenv('FLASK_ENV', 'real_development')
 
-  if flask_env == 'real_development':
+  if current_app.debug:
     current_app.logger.info('Return chat is in development mode....')
-    return 'Mohon maaf, saya sedang dalam maintenance'
+    return 'Mohon maaf, saya sedang dalam maintenance', None
   else:
-    current_app.logger.info('Querying to vectorstore...')
-    response = qna(session_id, message)
-    save_chat_log(session_id, message)
+    current_app.logger.info('Test Querying to vectorstore...')
+    response = chat_with_feedback(session_id, message)
+    #response = qna(session_id, message)
+    #save_chat_log(session_id, message)
 
     return response
 
@@ -32,11 +33,11 @@ def chat_with_feedback(session_id, message):
 
   try:  # Check if the message is a feedback number
     number = int(message)
-    if 0 <= number <= 3:  # Save the feedback
+    if 0 <= number <= 3:  # Save the feedback TODO: send feedback instruction on the first chat
       if session_id not in current_app.chats:
-        return get_random_response("feedback_first"), None
+        return get_random_response("feedback_first")
       save_chat_feedback(session_id=session_id, point=message)
-      return get_random_response("feedback"), None
+      return get_random_response("feedback")
   except ValueError:
     pass  # The message is not a number, so it might be a new question
 
@@ -48,7 +49,8 @@ def chat_with_feedback(session_id, message):
   # Save the new question and mark that feedback is needed
   response = qna(session_id, message)
   save_chat_log(session_id, message)
-  return response, ask_feedback
+  #return response, ask_feedback
+  return response
 
 
 def save_chat_log(session_id, message):
@@ -69,7 +71,7 @@ def save_chat_feedback(session_id, point):
   # append_chat_log(session_id, question.content, ai.content, message)
   # current_app.logger.info(f"Inserting Chat Feedback....\n{question.content}\n{point}")
 
-  # insert_chat_log(user=session_id,point=point,feedback=True)
+  #insert_chat_log(user=session_id,point=point,feedback=True)
 
 
 def qna(session_id, message):
