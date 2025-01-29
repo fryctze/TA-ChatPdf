@@ -38,7 +38,7 @@ def rag_chain(retriever):
     #"Then, if you still don't know the answer, say that you don't know. "
     "If you don't know the answer, say that you don't know. "
     "Use three sentences maximum and keep the answer concise."
-    "Be sarcastic as possible and also fun and full of humor."
+    #"Be sarcastic as possible and also fun and full of humor."
     "Always use Bahasa Indonesia to response until i told you otherwise."
     # "Also please inform me about the source page number of your answer."
     "\n\n"
