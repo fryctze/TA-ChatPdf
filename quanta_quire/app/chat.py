@@ -42,15 +42,15 @@ def chat_with_feedback(session_id, message):
     pass  # The message is not a number, so it might be a new question
 
   # Check if the session has previous chats
-  # if session_id not in current_app.chats:
-  #   response = qna(session_id, message)
-  #   return response, ask_feedback
+  if session_id not in current_app.chats:
+    response = qna(session_id, message)
+    return response, ask_feedback
 
   # Save the new question and mark that feedback is needed
   response = qna(session_id, message)
   save_chat_log(session_id, message)
   #return response, ask_feedback
-  return response
+  return response, None
 
 
 def save_chat_log(session_id, message):
@@ -68,10 +68,10 @@ def save_chat_log(session_id, message):
 def save_chat_feedback(session_id, point):
   ai = get_last_ai_message(current_app.chats, session_id)
   question = get_last_human_message(current_app.chats, session_id)
-  # append_chat_log(session_id, question.content, ai.content, message)
+  #append_chat_log(session_id, question.content, ai.content, message)
   # current_app.logger.info(f"Inserting Chat Feedback....\n{question.content}\n{point}")
 
-  #insert_chat_log(user=session_id,point=point,feedback=True)
+  insert_chat_log(user=session_id,point=point,feedback=True)
 
 
 def qna(session_id, message):

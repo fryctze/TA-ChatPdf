@@ -18,17 +18,17 @@ FEEDBACK_FILE = 'feedbacks.json'
 RECEIVING_APP_URL = "https://quanta-quire.glitch.me"
 
 
-def insert_chat_log(user, question="", answer=""):
+def insert_chat_log(user, question="", answer="", point=None, feedback=False):
   # now = datetime.now()
   # formated_time = now.strftime("%Y.%m.%d-%H:%M:%S")
   # UNUSED FEEDBACK
-  # if feedback:
-  #   log_entry = ChatLog.query.filter_by(user=user).order_by(ChatLog.timestamp.desc()).first()
-  #   if log_entry and log_entry.point is None:  # Update the last entry if feedback is provided
-  #     log_entry.point = point
-  #     current_app.logger.info(f"Inserting Chat Feedback....\n Point: {point}")
-  #     db.session.commit()
-  #     return
+  if feedback:
+    log_entry = ChatLog.query.filter_by(user=user).order_by(ChatLog.timestamp.desc()).first()
+    if log_entry and log_entry.point is None:  # Update the last entry if feedback is provided
+      log_entry.point = point
+      current_app.logger.info(f"Inserting Chat Feedback....\n Point: {point}")
+      db.session.commit()
+      return
   current_app.logger.info(f"Saving chat into database....\n Que: {question}\n Answer: {answer}")
   new_log_entry = ChatLog(
     user=user,
