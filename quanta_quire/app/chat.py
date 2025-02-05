@@ -17,7 +17,7 @@ def chat(session_id, message):
     return 'Mohon maaf, saya sedang dalam maintenance', None
   else:
     current_app.logger.info('Test Querying to vectorstore...')
-    response = chat_with_feedback(session_id, message)
+    response, feedback = chat_with_feedback(session_id, message)
     #response = qna(session_id, message)
     #save_chat_log(session_id, message)
 
@@ -35,15 +35,16 @@ def chat_with_feedback(session_id, message):
     number = int(message)
     if 0 <= number <= 3:  # Save the feedback TODO: send feedback instruction on the first chat
       if session_id not in current_app.chats:
-        return get_random_response("feedback_first")
+        return get_random_response("feedback_first"), None
       save_chat_feedback(session_id=session_id, point=message)
-      return get_random_response("feedback")
+      return get_random_response("feedback"), None
   except ValueError:
     pass  # The message is not a number, so it might be a new question
 
   # Check if the session has previous chats
   if session_id not in current_app.chats:
     response = qna(session_id, message)
+    save_chat_log(session_id, message)
     return response, ask_feedback
 
   # Save the new question and mark that feedback is needed

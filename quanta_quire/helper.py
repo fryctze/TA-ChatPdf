@@ -24,7 +24,7 @@ def insert_chat_log(user, question="", answer="", point=None, feedback=False):
   # UNUSED FEEDBACK
   if feedback:
     log_entry = ChatLog.query.filter_by(user=user).order_by(ChatLog.timestamp.desc()).first()
-    if log_entry and log_entry.point is None:  # Update the last entry if feedback is provided
+    if log_entry: # and log_entry.point is None:  # Update the last entry if feedback is provided
       log_entry.point = point
       current_app.logger.info(f"Inserting Chat Feedback....\n Point: {point}")
       db.session.commit()

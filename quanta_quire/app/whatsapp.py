@@ -75,8 +75,10 @@ def handle_whatsapp_message(body):
   if message["type"] == "text":
     message_body = message["text"]["body"]
 
-    response = make_openai_request(message_body, message["from"])
+    response, feedback = make_openai_request(message_body, message["from"])
     send_whatsapp_message(body, response)
+    if feedback is not None:
+      send_whatsapp_message(body, feedback)
 
   else:
     response = "Mohon maaf, tapi saya hanya bisa menerima pertanyaan berupa teks saja."
@@ -139,8 +141,9 @@ def send_whatsapp_message(body, message):
 
 def make_openai_request(message, from_number):
   try:
-    response_message = chat(from_number, message)
+    response_message, feedback = chat(from_number, message)
   except Exception as e:
     current_app.logger.error(f"openai error: {e}")
     response_message = "Mohon maaf, API OpenAI saat ini sedang sibuk atau tidak terhubung. Silahkan coba lagi nanti."
-  return response_message
+    feedback = None
+  return response_message, feedback
