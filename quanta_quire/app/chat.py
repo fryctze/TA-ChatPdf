@@ -21,7 +21,7 @@ def chat(session_id, message):
     #response = qna(session_id, message)
     #save_chat_log(session_id, message)
 
-    return response
+    return response, feedback
 
 
 def chat_with_feedback(session_id, message):
