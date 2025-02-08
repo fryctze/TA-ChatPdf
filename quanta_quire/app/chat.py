@@ -70,11 +70,13 @@ def save_chat_log(session_id, message):
   ai = get_last_ai_message(current_app.chats, session_id)
   # question = get_last_human_message(current_app.chats, session_id)
   # append_chat_log(session_id, question.content, ai.content, message)
-  # current_app.logger.info(f"Inserting Chat WITHOUT Feedback....\n{message}\n{ai.content}")
-  insert_chat_log(
-    user=session_id,
-    question=message,
-    answer=ai.content)
+  # current_app.logger.info(f"Inserting Chat WITHOU Feedback....\n{message}\n{ai.content}")
+  if ai is not None:
+    insert_chat_log(
+      user=session_id,
+      question=message,
+      answer=ai.content)
+  current_app.logger.info('save_chat_log, insert_chat_log, AI is None type')
 
 
 # UNUSED FEEDBACK
