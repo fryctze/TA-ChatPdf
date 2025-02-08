@@ -44,14 +44,26 @@ def chat_with_feedback(session_id, message):
   # Check if the session has previous chats
   if session_id not in current_app.chats:
     response = qna(session_id, message)
-    save_chat_log(session_id, message)
-    return response, ask_feedback
+    if response is not None:
+      save_chat_log(session_id, message)
+      return response, None
+
+    # credit is low, it return None
+    return (("Mohon maaf, Quanta Quire saat ini sedang kelaparan. "
+             "Mungkin bisa dibantu dengan menghubungi developer supaya saya diberi makan."),
+            ask_feedback)
 
   # Save the new question and mark that feedback is needed
   response = qna(session_id, message)
-  save_chat_log(session_id, message)
-  #return response, ask_feedback
-  return response, None
+  if response is not None:
+    save_chat_log(session_id, message)
+    return response, None
+
+  # credit is low, it return None
+  return (("Mohon maaf, Quanta Quire saat ini sedang kelaparan. "
+           "Mungkin bisa dibantu dengan menghubungi developer supaya saya diberi makan."),
+          ask_feedback)
+
 
 
 def save_chat_log(session_id, message):
